@@ -2,15 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//This is the script governing the position of the prediction foot(able leg)
+
 public class IKFootSolver : MonoBehaviour
 {
     [SerializeField] LayerMask terrainLayer = default;
     [SerializeField] Transform body = default;
     [SerializeField] float speed = 1;
+    //speed of the able leg. Note: once speed of the prosthetic leg can be retrieved via ble, Use getcomponent to retrieve speed of the prosthetic foot. is it the same as the able leg?
     [SerializeField] IKFootSolver otherFoot = default;
     [SerializeField] float stepDistance = 4;
+    //step distance is the offset that the able leg must have from the hip position to initiate step
     [SerializeField] float stepLength = 4;
+    //step length is how far the foot will take a step after step initiation
+    //change step length and step distance according to prosthetic value
     [SerializeField] float stepHeight = 1;
+    // change step height to variable value. Note: considering whether step height of abe leg will change according to step length/distance. 
     [SerializeField] Vector3 footOffset = default;
     float footSpacing;
     Vector3 oldPosition, currentPosition, newPosition;
@@ -35,7 +42,7 @@ public class IKFootSolver : MonoBehaviour
         //Debug.Log(transform.forward.ToString("F5"));
 
         Ray ray = new Ray(body.position + (body.right * footSpacing), Vector3.down);
-
+        //shooting raycast downward to determine current able leg offset from hip position    
         if (Physics.Raycast(ray, out RaycastHit info, 10, terrainLayer.value)) {
             if (Vector3.Distance(newPosition, info.point) > stepDistance && lerp >= 1) {
                 lerp = 0;
