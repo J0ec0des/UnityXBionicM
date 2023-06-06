@@ -58,7 +58,8 @@ public class positionManager : MonoBehaviour
             //first using current vector3 function types:
             // kneetarget = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
             // ankltarget = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
-            // var step = speed * Time.deltaTime;
+            // var step = data.footspeed * Time.deltaTime;
+            //above only possible if footspeed data is a data value given by the prosthetic leg
             // knee.transform.localPosition = Vector3.MoveTowards(transform.position, kneetarget, step);
             // ankl.transform.localPosition = Vector3.MoveTowards(transform.position, ankltarget, step);
             
