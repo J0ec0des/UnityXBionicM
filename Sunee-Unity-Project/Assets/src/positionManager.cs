@@ -36,7 +36,7 @@ public class positionManager : MonoBehaviour
     // public List<Kneelist> kneeposition = new List<Kneelist>();
     // public List<Ankllist> anklposition = new List<Ankllist>();
 
-    public float speed = 4;
+    public float bodyspeed = 4;
     //placeholder for speed variable, will change according to speed determination by prosthetic
     // delete value when implementing speed variation(experimental script 2)
 
@@ -53,6 +53,16 @@ public class positionManager : MonoBehaviour
             knee.transform.localPosition = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
             ankl.transform.localPosition = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
             //Debug.Log(data.time.ToString("F4") + hip.transform.position.ToString("F5"));
+            
+            //making an interpolated version of the transform function to account for the 30ms latency of prosthetics' BLE:
+            //first using current vector3 function types:
+            // kneetarget = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
+            // ankltarget = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
+            // var step = speed * Time.deltaTime;
+            // knee.transform.localPosition = Vector3.MoveTowards(transform.position, kneetarget, step);
+            // ankl.transform.localPosition = Vector3.MoveTowards(transform.position, ankltarget, step);
+            
+
 
             //Experimental script1(angle to Vector3 positions)
             //float knee_x = data.thigh_length * sin(data.hip_angl);
@@ -75,7 +85,7 @@ public class positionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.right * speed * Time.deltaTime);
+        transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
         //adding speed to character model
         
     }
