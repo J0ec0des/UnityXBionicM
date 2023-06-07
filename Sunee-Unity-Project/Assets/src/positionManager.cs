@@ -32,7 +32,8 @@ public class positionManager : MonoBehaviour
     public GameObject ankl;
     public Readingcsv script;
 
-    private Vector3 kneetarget, ankltarget;
+    public Vector3 kneetarget, ankltarget;
+
     
     // public List<Hiplist> position = new List<Hiplist>();
     // public List<Kneelist> kneeposition = new List<Kneelist>();
@@ -42,7 +43,6 @@ public class positionManager : MonoBehaviour
     //placeholder for body speed variable, will change according to speed determination by prosthetic
     // delete value when implementing speed variation(experimental script 2)
 
-    [SerializeField] float interpolationspeed = 1000;
 
     // Start is called before the first frame update
     
@@ -52,7 +52,7 @@ public class positionManager : MonoBehaviour
         yield return new WaitForEndOfFrame();
         foreach (Posdata data in script.position) {
             //hip.transform.localPosition = new Vector3(data.hip_pos_x * 10, data.hip_pos_z * 10, data.hip_pos_y * 10 ); 
-            //deleted due to values being 0.
+            //removed due to values being 0.
 
             // knee.transform.localPosition = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
             // ankl.transform.localPosition = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
@@ -62,25 +62,15 @@ public class positionManager : MonoBehaviour
             //first using current vector3 function types:
             kneetarget = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
             ankltarget = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
-            var step = interpolationspeed * Time.deltaTime;
-            //interpolationspeed may become a data value given by the prosthetic leg but mostly unnecessary
-            knee.transform.localPosition = Vector3.MoveTowards(transform.localPosition, kneetarget, step);
-            ankl.transform.localPosition = Vector3.MoveTowards(transform.localPosition, ankltarget, step);
-            
-            // Check if the position of the target and actual are approximately equal.
-            if (Vector3.Distance(knee.transform.localPosition, kneetarget) > 0.01f)
-            {
-                //force move
-                knee.transform.localPosition = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
-            }
-            if (Vector3.Distance(ankl.transform.localPosition, ankltarget) > 0.01f)
-            {
-                //force move
-                ankl.transform.localPosition = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
-            }
-            
-            
 
+            //lerp function
+            float time = 0;
+            while (time < 0.005f)
+            {
+                ankl.transform.localPosition = Vector3.Lerp(ankl.transform.localPosition, ankltarget, time / 0.005f);
+                time += Time.deltaTime;
+                yield return null;
+            }
 
             //Experimental script1(angle to Vector3 positions)
             // float knee_x = data.thigh_length * cos(data.hip_angl) * sin(data.hip_phi) / (Math.pow(cos(data.hip_phi)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_phi)));
@@ -92,19 +82,35 @@ public class positionManager : MonoBehaviour
             //knee.transform.localPosition = new Vector3(knee_x, knee_y, knee_z);
             //ankl.transform.localPosition = new Vector3(knee_x + ankl_x, knee_z + ankl_z, knee_y + ankl_y);
 
-            //Experimental script2(speed varation)
+            //Experimental script2(speed variation)
             //speed = data.hip_speed;
 
-            yield return new WaitForSeconds(0.005f);
+            //yield return new WaitForSeconds(0.005f);
             //change upper value for refresh rate of serial connection
+            //potential and/or necessity for automation once serial connication logistics are updated
+            //*temporarily removed for lerp function
+
+            // Check if the position of the target and actual are approximately equal.
+            if (Vector3.Distance(knee.transform.localPosition, kneetarget) > 0.001f)
+            {
+                //force move
+                knee.transform.localPosition = kneetarget;
+            }
+            if (Vector3.Distance(ankl.transform.localPosition, ankltarget) > 0.001f)
+            {
+                //force move
+                ankl.transform.localPosition = ankltarget;
+                Debug.Log("catch exception");
+            }
+
+
         }
     }
     
     // Update is called once per frame
     void Update()
     {
-        transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
+       // transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
         //adding speed to character model
-        
     }
 }
