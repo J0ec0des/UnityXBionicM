@@ -7,7 +7,7 @@ public class Posdata
    public float time,hip_pos_x,hip_pos_y,hip_pos_z,knee_pos_x,knee_pos_y,knee_pos_z,ankl_pos_x,ankl_pos_y,ankl_pos_z;
 
    //Add for Experimental script 1
-   //public float hip_angl, hip_phi, knee_angl, knee_phi;
+   //public float hip_angl, hip_abduction, knee_angl;
    //[SerializeField]public float thigh_length = 4;
    //[SerializeField]public float shin_length = 4; <-variable value that must be solved
 
@@ -68,17 +68,20 @@ public class positionManager : MonoBehaviour
             while (time < 0.005f)
             {
                 ankl.transform.localPosition = Vector3.Lerp(ankl.transform.localPosition, ankltarget, time / 0.005f);
+                knee.transform.localPosition = Vector3.Lerp(knee.transform.localPosition, kneetarget, time / 0.005f);
                 time += Time.deltaTime;
                 yield return null;
+                //Debug.Log("lerped");
             }
 
             //Experimental script1(angle to Vector3 positions)
-            // float knee_x = data.thigh_length * cos(data.hip_angl) * sin(data.hip_phi) / (Math.pow(cos(data.hip_phi)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_phi)));
-            // float knee_z = data.thigh_length * cos(data.hip_phi) * sin(data.hip_angl) / (Math.pow(cos(data.hip_phi)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_phi)));
-            // float knee_y = data.thigh_length * sin(data.hip_phi) * sin(data.hip_angl) / (Math.pow(cos(data.hip_phi)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_phi)));
-            // float ankl_x = data.shin_length * cos(data.knee_angl) * sin(data.knee_phi) / (Math.pow(cos(data.knee_phi)) * Math.Pow(sin(data.knee_angl)) + Math.Pow(sin(data.knee_phi)));
-            // float ankl_z = data.shin_length * cos(data.knee_phi) * sin(data.knee_angl) / (Math.pow(cos(data.knee_phi)) * Math.Pow(sin(data.knee_angl)) + Math.Pow(sin(data.knee_phi)));
-            // float ankl_y = data.shin_length * sin(data.knee_phi) * sin(data.knee_angl) / (Math.pow(cos(data.knee_phi)) * Math.Pow(sin(data.knee_angl)) + Math.Pow(sin(data.knee_phi)));
+            //float globalknee_angl = data.hip_angl + data.knee_angl;
+            // float knee_x = data.thigh_length * cos(data.hip_angl) * sin(data.hip_abduction) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float knee_z = data.thigh_length * cos(data.hip_abduction) * sin(data.hip_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float knee_y = data.thigh_length * sin(data.hip_abduction) * sin(data.hip_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float ankl_x = data.shin_length * cos(globalknee_angl) * sin(data.hip_abduction) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float ankl_z = data.shin_length * cos(data.hip_abduction) * sin(globalknee_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float ankl_y = data.shin_length * sin(data.hip_abduction) * sin(globalknee_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
             //knee.transform.localPosition = new Vector3(knee_x, knee_y, knee_z);
             //ankl.transform.localPosition = new Vector3(knee_x + ankl_x, knee_z + ankl_z, knee_y + ankl_y);
 
@@ -100,7 +103,7 @@ public class positionManager : MonoBehaviour
             {
                 //force move
                 ankl.transform.localPosition = ankltarget;
-                Debug.Log("catch exception");
+                //Debug.Log("catch exception");
             }
 
 
@@ -110,7 +113,7 @@ public class positionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       // transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
+       transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
         //adding speed to character model
     }
 }

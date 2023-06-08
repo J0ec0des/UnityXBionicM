@@ -7,10 +7,13 @@ using UnityEngine;
 public class IKFootSolver : MonoBehaviour
 {
     [SerializeField] LayerMask terrainLayer = default;
+    //recognization of the terrain as the ground(collidable obejct)
     [SerializeField] Transform body = default;
+    //init gameobject this script is attached to will be the body that is altered(moved)
     [SerializeField] float speed = 1;
     //speed of the able leg. Note: once speed of the prosthetic leg can be retrieved via ble, Use getcomponent to retrieve speed of the prosthetic foot. is it the same as the able leg?
     [SerializeField] IKFootSolver otherFoot = default;
+    //initializing gameobject of the prosthetic foot for recognition by the script
     [SerializeField] float stepDistance = 4;
     //step distance is the offset that the able leg must have from the hip position to initiate step
     [SerializeField] float stepLength = 4;
@@ -19,6 +22,7 @@ public class IKFootSolver : MonoBehaviour
     [SerializeField] float stepHeight = 1;
     // change step height to variable value. Note: considering whether step height of abe leg will change according to step length/distance. 
     [SerializeField] Vector3 footOffset = default;
+    //initial offset between the two feet
     float footSpacing;
     Vector3 oldPosition, currentPosition, newPosition;
     Vector3 oldNormal, currentNormal, newNormal;
