@@ -13,6 +13,10 @@ public class Posdata
 
    //Add for Experimental script 2
    //public float hip_speed;
+
+    // initializing cadence and loaded
+   //public float cadence;
+    public static bool loaded;
 }
 public class Hiplist {
     public Vector3 hpos;
@@ -43,9 +47,12 @@ public class positionManager : MonoBehaviour
     //placeholder for body speed variable, will change according to speed determination by prosthetic
     // delete value when implementing speed variation(experimental script 2)
 
+    public float stepDistance;
+    public float currentxpos;
+
+    [SerializeField] Transform hipmodel;
 
     // Start is called before the first frame update
-    
     IEnumerator Start()
     {
         script = GetComponent<Readingcsv>();
@@ -62,7 +69,7 @@ public class positionManager : MonoBehaviour
             //first using current vector3 function types:
             kneetarget = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
             ankltarget = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
-
+            
             //lerp function
             float time = 0;
             while (time < 0.005f)
@@ -84,6 +91,9 @@ public class positionManager : MonoBehaviour
             // float ankl_y = data.shin_length * sin(data.hip_abduction) * sin(globalknee_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
             //knee.transform.localPosition = new Vector3(knee_x, knee_y, knee_z);
             //ankl.transform.localPosition = new Vector3(knee_x + ankl_x, knee_z + ankl_z, knee_y + ankl_y);
+            
+            //saving xpos as value
+            // currentxpos = knee_x + ankl_x;
 
             //Experimental script2(speed variation)
             //speed = data.hip_speed;
@@ -113,7 +123,47 @@ public class positionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
+       //transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
         //adding speed to character model
+        TryHipSim();
+        
     }
+    public void TryHipSim() {
+        if (Posdata.loaded = false)
+        {
+            //Start moving hip
+            StartCoroutine(MoveHip());
+        }
+    }
+    IEnumerator MoveHip() {
+        float timeelapsed = 0;
+        //Move hip function
+        //use stepDistance to find period of sine curve
+        yield return null;
+    }
+    void LateUpdate()
+    {
+        //insert animation related functions here so environment is deveoped-> animation -> frame rendered
+    }
+
+    // private float lastpos = 0;
+    // private void GetFootLength() 
+    // {
+    //     stepDistance = ((currentxpos) - lastpos) / 2;
+    //     lastpos = currentxpos;
+    // }
+
+
+    // //check if loaded is changed
+    // private bool _boolValue;
+    // public bool BoolValue
+    // {
+    //     get { return _boolValue; }
+    //     set
+    //     {
+    //         _boolValue = value;
+    //         //triggering x-value recorder
+    //         GetFootLength();
+    //     }
+    // }
 }
