@@ -8,6 +8,11 @@ public class HipMover : MonoBehaviour
 {
     public GameObject hipmodel;
 
+    public Transform ground;
+    public Transform prostheticFoot;
+
+    [SerializeField] float offsetfromgnd = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +31,16 @@ public class HipMover : MonoBehaviour
             //Start moving hip
             StartCoroutine(MoveHipsim());
         }
+        else 
+        {
+            MoveHippros();
+        }
+    }
+    float FindHipY(Transform groundpos, Transform footpos)
+    {
+        float loadedhipY = groundpos.position.y - footpos.position.y;
+        //change here for height determination
+        return loadedhipY;
     }
     IEnumerator MoveHipsim() 
     {
@@ -37,11 +52,11 @@ public class HipMover : MonoBehaviour
         //transform.position = slerp();
         yield return null;
     }
-    IEnumerator MoveHippros() 
+    void MoveHippros() 
     {
         //move hip fuction when the prosthetic is on the ground.
-        
-        yield return null;
+        hipmodel.transform.localPosition += new Vector3(0, FindHipY(ground, prostheticFoot) + offsetfromgnd, 0);
+        //may add interpolation function is resultant animation is janky
     }
 
     void LateUpdate()
