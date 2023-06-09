@@ -2705,12 +2705,15 @@ MonoBehaviour:
   hip: {fileID: 905963710}
   knee: {fileID: 163891181}
   ankl: {fileID: 1509453775}
+  charactermodel: {fileID: 919132148552545853}
   script: {fileID: 0}
   kneetarget: {x: 0, y: 0, z: 0}
   ankltarget: {x: 0, y: 0, z: 0}
   bodyspeed: 4
   stepDistance: 0
   currentxpos: 0
+  height: 170
+  conversionconstant: 1.35
 --- !u!114 &2142198897
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2807,7 +2810,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hipmodel: {fileID: 430108200082163061}
   ground: {fileID: 1402535933}
-  prostheticFoot: {fileID: 0}
+  prostheticFoot: {fileID: 4079550658908999814}
   offsetfromgnd: 0
 --- !u!4 &543450653094964359
 Transform:

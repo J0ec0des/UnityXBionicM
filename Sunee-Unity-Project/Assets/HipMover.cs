@@ -26,12 +26,12 @@ public class HipMover : MonoBehaviour
     }
     public void TryHipSim() 
     {
-        if (Posdata.loaded = false)
+        if (Posdata.loaded == false)
         {
             //Start moving hip
             StartCoroutine(MoveHipsim());
         }
-        else 
+        if (Posdata.loaded == true) 
         {
             MoveHippros();
         }
@@ -51,12 +51,14 @@ public class HipMover : MonoBehaviour
         Quaternion startRot = hipmodel.transform.localRotation;
         //transform.position = slerp();
         yield return null;
+        Debug.Log("movinghipsim");
     }
     void MoveHippros() 
     {
         //move hip fuction when the prosthetic is on the ground.
         hipmodel.transform.localPosition += new Vector3(0, FindHipY(ground, prostheticFoot) + offsetfromgnd, 0);
         //may add interpolation function is resultant animation is janky
+        Debug.Log("movinghippros");
     }
 
     void LateUpdate()
