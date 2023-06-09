@@ -33,6 +33,9 @@ public class positionManager : MonoBehaviour
     public GameObject knee;
     
     public GameObject ankl;
+
+    public GameObject charactermodel;
+
     public Readingcsv script;
 
     public Vector3 kneetarget, ankltarget;
@@ -53,9 +56,19 @@ public class positionManager : MonoBehaviour
     public float stepDistance;
     public float currentxpos;
 
-    // Start is called before the first frame update
+    [SerializeField]float height = 170f;
+    public static float height_normalized;
+    [SerializeField]float conversionconstant = 1.35f;
+    public static float thigh_length;
+    public static float shin_length;
+
+    // Start is called before the first frame update, coroutine
     IEnumerator Start()
     {
+        height_normalized = height * conversionconstant / 170f;
+        thigh_length = height_normalized * 0.245f;
+        shin_length = height_normalized * 0.246f;
+        charactermodel.transform.localScale = new Vector3(height_normalized, height_normalized, height_normalized);
         script = GetComponent<Readingcsv>();
         yield return new WaitForEndOfFrame();
         foreach (Posdata data in script.position) {
