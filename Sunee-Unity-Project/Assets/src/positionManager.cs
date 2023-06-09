@@ -29,6 +29,7 @@ public class Ankllist {
 }
 public class positionManager : MonoBehaviour
 {
+    //likely unnecessry
     public GameObject hip;
     
     public GameObject knee;
@@ -50,7 +51,7 @@ public class positionManager : MonoBehaviour
     public float stepDistance;
     public float currentxpos;
 
-    [SerializeField] Transform hipmodel;
+    public static float hipDistancefromgnd;
 
     // Start is called before the first frame update
     IEnumerator Start()
@@ -125,45 +126,27 @@ public class positionManager : MonoBehaviour
     {
        //transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
         //adding speed to character model
-        TryHipSim();
         
     }
-    public void TryHipSim() {
-        if (Posdata.loaded = false)
-        {
-            //Start moving hip
-            StartCoroutine(MoveHip());
-        }
-    }
-    IEnumerator MoveHip() {
-        float timeelapsed = 0;
-        //Move hip function
-        //use stepDistance to find period of sine curve
-        yield return null;
-    }
-    void LateUpdate()
-    {
-        //insert animation related functions here so environment is deveoped-> animation -> frame rendered
-    }
 
-    // private float lastpos = 0;
-    // private void GetFootLength() 
-    // {
-    //     stepDistance = ((currentxpos) - lastpos) / 2;
-    //     lastpos = currentxpos;
-    // }
+    private float lastpos = 0;
+    private void GetFootLength() 
+    {
+        stepDistance = ((currentxpos) - lastpos) / 2;
+        lastpos = currentxpos;
+    }
 
 
     // //check if loaded is changed
-    // private bool _boolValue;
-    // public bool BoolValue
-    // {
-    //     get { return _boolValue; }
-    //     set
-    //     {
-    //         _boolValue = value;
-    //         //triggering x-value recorder
-    //         GetFootLength();
-    //     }
-    // }
+    private bool _boolValue;
+    public bool BoolValue
+    {
+        get { return _boolValue; }
+        set
+        {
+            _boolValue = value;
+            //triggering x-value recorder
+            GetFootLength();
+        }
+    }
 }

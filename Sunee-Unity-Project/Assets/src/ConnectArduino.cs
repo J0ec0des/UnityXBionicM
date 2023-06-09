@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO.Ports;
 
+//experimental script for arduino serial connection *no actual function in actual simulation
+
 public class ConnectArduino : MonoBehaviour
 {
     SerialPort arddatastream = new SerialPort("/dev/cu.usbserial-110", 9600);
