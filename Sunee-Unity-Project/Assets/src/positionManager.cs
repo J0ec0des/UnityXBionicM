@@ -14,7 +14,7 @@ public class Posdata
 
     // initializing cadence and loaded
     public static float cadence;
-    public static bool loaded;
+    public static bool loaded = true;
 }
 public class Hiplist {
     public Vector3 hpos;
@@ -136,7 +136,7 @@ public class positionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       //transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
+        //transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
         //adding speed to character model
         
     }
@@ -147,7 +147,11 @@ public class positionManager : MonoBehaviour
         stepDistance = ((currentxpos) - lastpos) / 2;
         lastpos = currentxpos;
     }
-
+    float GetBodySpeed(float stepdistance)
+    {
+        float speed = stepdistance * Posdata.cadence;
+        return speed;
+    }
 
     // //check if loaded is changed
     private bool _boolValue;

@@ -11,8 +11,8 @@ public class HipMover : MonoBehaviour
     public Transform ground;
     public Transform prostheticFoot;
 
-    [SerializeField] float offsetfromgnd = 0;
-    [SerializeField] float hipdip = 0.01f;
+    [SerializeField] float offsetfromgnd = 1f;
+    [SerializeField] float hipdip = 0.85f;
 
     public bool Moving = false;
 
@@ -77,7 +77,7 @@ public class HipMover : MonoBehaviour
             //must alter bezier curve accordingly to gait
 
             //version using a sine curve
-            // localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
+            //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
 
             hipmodel.transform.position = localPos;
             Debug.Log(localPos.y + "pos");
@@ -94,6 +94,7 @@ public class HipMover : MonoBehaviour
         hipmodel.transform.position = localPos;   
         //may add interpolation function is resultant animation is janky
         Debug.Log("movinghippros");
+        Debug.Log(localPos.y + "posy");
     }
 
     void LateUpdate()
