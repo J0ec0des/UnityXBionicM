@@ -2712,7 +2712,7 @@ MonoBehaviour:
   bodyspeed: 4
   stepDistance: 0
   currentxpos: 0
-  height: 170
+  height: 150
   conversionconstant: 1.35
 --- !u!114 &2142198897
 MonoBehaviour:
@@ -2812,6 +2812,8 @@ MonoBehaviour:
   ground: {fileID: 1402535933}
   prostheticFoot: {fileID: 4079550658908999814}
   offsetfromgnd: 0
+  hipdip: 0.001
+  Moving: 0
 --- !u!4 &543450653094964359
 Transform:
   m_ObjectHideFlags: 0

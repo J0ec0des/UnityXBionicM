@@ -13,7 +13,7 @@ public class Posdata
    //public float hip_speed;
 
     // initializing cadence and loaded
-   //public float cadence;
+    public static float cadence;
     public static bool loaded;
 }
 public class Hiplist {
