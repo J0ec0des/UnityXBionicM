@@ -34,11 +34,10 @@ public class positionManager : MonoBehaviour
     
     public GameObject ankl;
 
-    public GameObject charactermodel;
-
     public Readingcsv script;
 
     public Vector3 kneetarget, ankltarget;
+
 
     //Add for experimental script 1:
     //[SerializeField]public float thigh_length = 4;
@@ -56,19 +55,11 @@ public class positionManager : MonoBehaviour
     public float stepDistance;
     public float currentxpos;
 
-    [SerializeField]float height = 170f;
-    public static float height_normalized;
-    [SerializeField]float conversionconstant = 1.35f;
-    public static float thigh_length;
-    public static float shin_length;
+
 
     // Start is called before the first frame update, coroutine
     IEnumerator Start()
     {
-        height_normalized = height * conversionconstant / 170f;
-        thigh_length = height_normalized * 0.245f;
-        shin_length = height_normalized * 0.246f;
-        charactermodel.transform.localScale = new Vector3(height_normalized, height_normalized, height_normalized);
         script = GetComponent<Readingcsv>();
         yield return new WaitForEndOfFrame();
         foreach (Posdata data in script.position) {
@@ -97,12 +88,12 @@ public class positionManager : MonoBehaviour
 
             //Experimental script1(angle to Vector3 positions)
             //float globalknee_angl = data.hip_angl + data.knee_angl;
-            // float knee_x = thigh_length * cos(data.hip_angl) * sin(data.hip_abduction) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float knee_z = thigh_length * cos(data.hip_abduction) * sin(data.hip_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float knee_y = thigh_length * sin(data.hip_abduction) * sin(data.hip_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float ankl_x = shin_length * cos(globalknee_angl) * sin(data.hip_abduction) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float ankl_z = shin_length * cos(data.hip_abduction) * sin(globalknee_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float ankl_y = shin_length * sin(data.hip_abduction) * sin(globalknee_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float knee_x = Scalemanager.thigh_length * cos(data.hip_angl) * sin(data.hip_abduction) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float knee_z = Scalemanager.thigh_length * cos(data.hip_abduction) * sin(data.hip_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float knee_y = Scalemanager.thigh_length * sin(data.hip_abduction) * sin(data.hip_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float ankl_x = Scalemanager.shin_length * cos(globalknee_angl) * sin(data.hip_abduction) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float ankl_z = Scalemanager.shin_length * cos(data.hip_abduction) * sin(globalknee_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
+            // float ankl_y = Scalemanager.shin_length * sin(data.hip_abduction) * sin(globalknee_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
             //knee.transform.localPosition = new Vector3(knee_x, knee_y, knee_z);
             //ankl.transform.localPosition = new Vector3(knee_x + ankl_x, knee_z + ankl_z, knee_y + ankl_y);
             

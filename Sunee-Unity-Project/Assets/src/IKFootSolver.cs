@@ -28,10 +28,12 @@ public class IKFootSolver : MonoBehaviour
     Vector3 oldNormal, currentNormal, newNormal;
     float lerp;
 
+    public GameObject rightfoot;
 
     // Start is called before the first frame update
     void Start()
     {
+        //transform.position = rightfoot.transform.position;
         footSpacing = transform.localPosition.x;
         currentPosition = newPosition = oldPosition = transform.position;
         //currentNormal = newNormal = oldNormal = -transform.forward;

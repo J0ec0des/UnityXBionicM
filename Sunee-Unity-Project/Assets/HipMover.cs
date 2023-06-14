@@ -7,6 +7,8 @@ using UnityEngine;
 public class HipMover : MonoBehaviour
 {
     public GameObject hipmodel;
+    public GameObject targetmodel;
+
 
     public Transform ground;
     public Transform prostheticFoot;
@@ -95,6 +97,11 @@ public class HipMover : MonoBehaviour
         //may add interpolation function is resultant animation is janky
         Debug.Log("movinghippros");
         Debug.Log(localPos.y + "posy");
+
+        //move target body as well according to hip
+        Vector3 targetPos = targetmodel.transform.position;
+        targetPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
+        targetmodel.transform.position = targetPos;   
     }
 
     void LateUpdate()
