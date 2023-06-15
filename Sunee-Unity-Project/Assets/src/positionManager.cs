@@ -6,15 +6,18 @@ public class Posdata
 {
    public float time,hip_pos_x,hip_pos_y,hip_pos_z,knee_pos_x,knee_pos_y,knee_pos_z,ankl_pos_x,ankl_pos_y,ankl_pos_z;
 
+   public float interval,sampling;
+   public int stance; //may use in the future 
+
    //Add for Experimental script 1
-   //public float hip_angl, hip_abduction, knee_angl;
+   public float hip_angl, hip_abduction, knee_angl;
 
    //Add for Experimental script 2
-   //public float hip_speed;
+   public float hip_speed;
 
     // initializing cadence and loaded
-    public static float cadence;
-    public static bool loaded = true;
+    public float cadence;
+    public int loaded;
 }
 public class Hiplist {
     public Vector3 hpos;
@@ -38,6 +41,8 @@ public class positionManager : MonoBehaviour
 
     public Vector3 kneetarget, ankltarget;
 
+    public static float cadence;
+    public static bool loaded = true;
 
     //Add for experimental script 1:
     //[SerializeField]public float thigh_length = 4;
@@ -72,33 +77,45 @@ public class positionManager : MonoBehaviour
             
             //making an interpolated version of the transform function to account for the 30ms latency of prosthetics' BLE:
             //first using current vector3 function types:
-            kneetarget = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
-            ankltarget = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
+            // kneetarget = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
+            // ankltarget = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
+            positionManager.cadence = data.cadence;
+            Debug.Log(data.cadence + "caded");
+            if (data.loaded == 1) {
+                positionManager.loaded = true;
+            }
+            else {
+                positionManager.loaded = false;
+            }
+            float globalknee_angl = data.hip_angl + data.knee_angl;
+            float B = (Mathf.PI / 2) - data.hip_abduction;
+            float thighA = (Mathf.PI / 2) - data.hip_angl;
+            float shinA = (Mathf.PI / 2) - globalknee_angl;
+
+            //Experimental script1(angle to Vector3 positions)
+            float knee_x = -1f * Scalemanager.thigh_length * Mathf.Cos(thighA) * Mathf.Sin(B) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(thighA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
+            float knee_z = Scalemanager.thigh_length * Mathf.Cos(B) * Mathf.Sin(thighA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(thighA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
+            float knee_y = -1f * Scalemanager.thigh_length * Mathf.Sin(B) * Mathf.Sin(thighA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(thighA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
+            float ankl_x = -1f * Scalemanager.shin_length * Mathf.Cos(shinA) * Mathf.Sin(B) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
+            float ankl_z = Scalemanager.shin_length * Mathf.Cos(B) * Mathf.Sin(shinA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
+            float ankl_y = -1f * Scalemanager.shin_length * Mathf.Sin(B) * Mathf.Sin(shinA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
+            Debug.Log(knee_x + "knex");
+
+            kneetarget = new Vector3(knee_x, knee_y, knee_z);
+            ankltarget = new Vector3(knee_x + ankl_x, knee_y + ankl_y, knee_z + ankl_z);
             
-            //lerp function
             float time = 0;
-            while (time < 0.005f)
+            while (time < (data.interval * 0.001f))
             {
-                ankl.transform.localPosition = Vector3.Lerp(ankl.transform.localPosition, ankltarget, time / 0.005f);
-                knee.transform.localPosition = Vector3.Lerp(knee.transform.localPosition, kneetarget, time / 0.005f);
+                ankl.transform.localPosition = Vector3.Lerp(ankl.transform.localPosition, ankltarget, time / data.interval);
+                knee.transform.localPosition = Vector3.Lerp(knee.transform.localPosition, kneetarget, time / data.interval);
                 time += Time.deltaTime;
                 yield return null;
                 //Debug.Log("lerped");
             }
 
-            //Experimental script1(angle to Vector3 positions)
-            //float globalknee_angl = data.hip_angl + data.knee_angl;
-            // float knee_x = Scalemanager.thigh_length * cos(data.hip_angl) * sin(data.hip_abduction) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float knee_z = Scalemanager.thigh_length * cos(data.hip_abduction) * sin(data.hip_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float knee_y = Scalemanager.thigh_length * sin(data.hip_abduction) * sin(data.hip_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(data.hip_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float ankl_x = Scalemanager.shin_length * cos(globalknee_angl) * sin(data.hip_abduction) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float ankl_z = Scalemanager.shin_length * cos(data.hip_abduction) * sin(globalknee_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
-            // float ankl_y = Scalemanager.shin_length * sin(data.hip_abduction) * sin(globalknee_angl) / (Math.pow(cos(data.hip_abduction)) * Math.Pow(sin(globalknee_angl)) + Math.Pow(sin(data.hip_abduction)));
-            //knee.transform.localPosition = new Vector3(knee_x, knee_y, knee_z);
-            //ankl.transform.localPosition = new Vector3(knee_x + ankl_x, knee_z + ankl_z, knee_y + ankl_y);
-            
             //saving xpos as value
-            // currentxpos = knee_x + ankl_x;
+            currentxpos = knee_x + ankl_x;
 
             //Experimental script2(speed variation)
             //speed = data.hip_speed;
@@ -140,7 +157,7 @@ public class positionManager : MonoBehaviour
     }
     float GetBodySpeed(float stepdistance)
     {
-        float speed = stepdistance * Posdata.cadence;
+        float speed = stepdistance * positionManager.cadence;
         return speed;
     }
 

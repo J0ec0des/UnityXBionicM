@@ -448,6 +448,7 @@ MonoBehaviour:
   stepLength: 3.5
   stepHeight: 1.7
   footOffset: {x: 0, y: 0, z: 0}
+  rightfoot: {fileID: 0}
 --- !u!4 &146127792 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -2655329025797423798, guid: f8a41c6b2496e48109b0175e5e866430, type: 3}
@@ -2218,7 +2219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8eef49a5b7d3c437096da40be34873af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainOffset: 0.5
+  terrainOffset: 0.1
   toe: {fileID: 4200615280842988678}
 --- !u!4 &1451843687 stripped
 Transform:
@@ -2878,7 +2879,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   charactermodel: {fileID: 919132148552545853}
-  height: 170
+  height: 174
   conversionconstant: 1.35
 --- !u!1 &284106651349188617
 GameObject:
@@ -2930,7 +2931,7 @@ MonoBehaviour:
   targetmodel: {fileID: 905963710}
   ground: {fileID: 1402535933}
   prostheticFoot: {fileID: 4079550658908999814}
-  offsetfromgnd: -0.8
+  offsetfromgnd: -0.2
   hipdip: 0.001
   Moving: 0
 --- !u!114 &430108200082163063

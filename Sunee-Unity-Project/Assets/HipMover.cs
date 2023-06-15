@@ -25,20 +25,30 @@ public class HipMover : MonoBehaviour
     }
 
     // Update is called once per frame
+    float time = 0.5f;
     void Update()
     {
-        TryHipSim();
-        Debug.Log(Moving);
+		// if(time >= 0){
+		// 	time -= Time.deltaTime;
+		// 	return;
+		//}else{
+		    if (Moving) return;
+            TryHipSim();
+            Debug.Log(Moving);
+		//}
+       //Do Something else while clock counting down        
+
     }
     public void TryHipSim() 
     {
         if (Moving) return;
-        if (Posdata.loaded == false && Moving ==false)
+        if (positionManager.loaded == false && Moving ==false)
         {
             //Start moving hip
-            StartCoroutine(MoveHipsim(Posdata.cadence));
+            StartCoroutine(MoveHipsim());
+            
         }
-        if (Posdata.loaded == true) 
+        if (positionManager.loaded == true) 
         {
             MoveHippros();
         }
@@ -53,18 +63,17 @@ public class HipMover : MonoBehaviour
         //change here for height determination
         return loadedhipY;
     }
-    IEnumerator MoveHipsim(float cadence) 
+    IEnumerator MoveHipsim() 
     {
         Moving = true;
         float moveDuration;
-        moveDuration = 60 / 60;
-        //cadence here
+        moveDuration = 60 / positionManager.cadence;
+        Debug.Log(positionManager.cadence + "cad");
         float timeelapsed = 0f;
         //Move hip function when the able leg is on the ground
         //use stepDistance to find period of sine curve
         Vector3 startpos = hipmodel.transform.position;
 
-        Debug.Log("movinghipsim");
         do
         {
             timeelapsed += Time.deltaTime;
@@ -77,12 +86,11 @@ public class HipMover : MonoBehaviour
             );
             //quadratic bezier curve made by nested linear interpolation, returns to startpos
             //must alter bezier curve accordingly to gait
-
+            Debug.Log("movinghipsim");
             //version using a sine curve
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
 
             hipmodel.transform.position = localPos;
-            Debug.Log(localPos.y + "pos");
             yield return null;
         } while (timeelapsed < moveDuration);
 
@@ -95,7 +103,6 @@ public class HipMover : MonoBehaviour
         localPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
         hipmodel.transform.position = localPos;   
         //may add interpolation function is resultant animation is janky
-        Debug.Log("movinghippros");
         Debug.Log(localPos.y + "posy");
 
         //move target body as well according to hip
@@ -104,9 +111,9 @@ public class HipMover : MonoBehaviour
         targetmodel.transform.position = targetPos;   
     }
 
-    void LateUpdate()
-    {
-        //insert animation related functions here so environment is deveoped-> animation -> frame rendered
-    }
+    // void LateUpdate()
+    // {
+    //     //insert animation related functions here so environment is deveoped-> animation -> frame rendered
+    // }
 
 }

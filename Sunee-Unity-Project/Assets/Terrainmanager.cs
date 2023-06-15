@@ -5,7 +5,7 @@ using UnityEngine;
 public class Terrainmanager : MonoBehaviour
 {
     // Start is called before the first frame update
-    [SerializeField] float terrainOffset = 0.5f;
+    [SerializeField] float terrainOffset = 0.2f;
     public GameObject toe;
 
     void Start()

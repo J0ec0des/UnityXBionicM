@@ -15,8 +15,8 @@ public class Scalemanager : MonoBehaviour
     void Awake()
     {
         height_normalized = height * conversionconstant / 170f;
-        thigh_length = height_normalized * 0.245f;
-        shin_length = height_normalized * 0.246f;
+        thigh_length = height_normalized * 0.245f * 12f;
+        shin_length = height_normalized * 0.246f * 12f;
         charactermodel.transform.localScale = new Vector3(height_normalized, height_normalized, height_normalized);
     }
 }
