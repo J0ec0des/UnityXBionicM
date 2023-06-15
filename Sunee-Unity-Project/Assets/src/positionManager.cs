@@ -80,13 +80,13 @@ public class positionManager : MonoBehaviour
             // kneetarget = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
             // ankltarget = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
             positionManager.cadence = data.cadence;
-            Debug.Log(data.cadence + "caded");
             if (data.loaded == 1) {
                 positionManager.loaded = true;
             }
             else {
                 positionManager.loaded = false;
             }
+            Debug.Log(positionManager.loaded + "cadpos");
             float globalknee_angl = data.hip_angl + data.knee_angl;
             float B = (Mathf.PI / 2) - data.hip_abduction;
             float thighA = (Mathf.PI / 2) - data.hip_angl;
@@ -99,7 +99,6 @@ public class positionManager : MonoBehaviour
             float ankl_x = -1f * Scalemanager.shin_length * Mathf.Cos(shinA) * Mathf.Sin(B) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
             float ankl_z = Scalemanager.shin_length * Mathf.Cos(B) * Mathf.Sin(shinA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
             float ankl_y = -1f * Scalemanager.shin_length * Mathf.Sin(B) * Mathf.Sin(shinA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
-            Debug.Log(knee_x + "knex");
 
             kneetarget = new Vector3(knee_x, knee_y, knee_z);
             ankltarget = new Vector3(knee_x + ankl_x, knee_y + ankl_y, knee_z + ankl_z);

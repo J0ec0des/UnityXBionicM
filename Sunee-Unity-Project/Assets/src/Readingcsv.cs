@@ -11,7 +11,7 @@ public class Readingcsv : MonoBehaviour
     // Start is called before the first frame update
     void Start ()
     {
-        TextAsset csvposdata = Resources.Load<TextAsset>("monitor4");
+        TextAsset csvposdata = Resources.Load<TextAsset>("monitor2");
         //init file
         string[] data = csvposdata.text.Split(new char[] { '\n' });
         //parsing in terms of all values between comma characters
@@ -42,6 +42,7 @@ public class Readingcsv : MonoBehaviour
                 
                 float.TryParse(row[4], out p.hip_angl);
                 float.TryParse(row[5], out p.hip_abduction);
+                float.TryParse(row[6], out p.knee_angl);
                 float.TryParse(row[7], out p.cadence);
                 int.TryParse(row[8], out p.loaded);
                 int.TryParse(row[9], out p.stance);

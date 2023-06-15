@@ -32,15 +32,15 @@ public class HipMover : MonoBehaviour
 		// 	time -= Time.deltaTime;
 		// 	return;
 		//}else{
-		    if (Moving) return;
             TryHipSim();
-            Debug.Log(Moving);
+            Debug.Log(Moving + "moving");
 		//}
        //Do Something else while clock counting down        
 
     }
     public void TryHipSim() 
     {
+        Debug.Log(positionManager.loaded + "cadload");
         if (Moving) return;
         if (positionManager.loaded == false && Moving ==false)
         {
@@ -66,9 +66,12 @@ public class HipMover : MonoBehaviour
     IEnumerator MoveHipsim() 
     {
         Moving = true;
-        float moveDuration;
-        moveDuration = 60 / positionManager.cadence;
-        Debug.Log(positionManager.cadence + "cad");
+        float moveDuration = 60 / positionManager.cadence;
+        if (moveDuration > 5f) {
+            Moving = false;
+            yield break;
+        } 
+        Debug.Log(moveDuration + "dura" + positionManager.cadence + "cad");
         float timeelapsed = 0f;
         //Move hip function when the able leg is on the ground
         //use stepDistance to find period of sine curve
@@ -76,6 +79,13 @@ public class HipMover : MonoBehaviour
 
         do
         {
+            if (positionManager.loaded == true) 
+            {
+                MoveHippros();
+                Moving = false;
+                Debug.Log("broken");
+                yield break;
+            }
             timeelapsed += Time.deltaTime;
             float normalizedTime = timeelapsed / moveDuration;
             Vector3 localPos = hipmodel.transform.position;
@@ -93,7 +103,6 @@ public class HipMover : MonoBehaviour
             hipmodel.transform.position = localPos;
             yield return null;
         } while (timeelapsed < moveDuration);
-
         Moving = false;
     }
     void MoveHippros() 
@@ -103,7 +112,7 @@ public class HipMover : MonoBehaviour
         localPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
         hipmodel.transform.position = localPos;   
         //may add interpolation function is resultant animation is janky
-        Debug.Log(localPos.y + "posy");
+        Debug.Log(localPos.y + "cadposy");
 
         //move target body as well according to hip
         Vector3 targetPos = targetmodel.transform.position;
