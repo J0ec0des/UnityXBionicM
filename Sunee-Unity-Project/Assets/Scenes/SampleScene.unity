@@ -2972,7 +2972,7 @@ MonoBehaviour:
   targetmodel: {fileID: 905963710}
   ground: {fileID: 1402535933}
   prostheticFoot: {fileID: 4079550658908999814}
-  offsetfromgnd: -0.2
+  offsetfromgnd: 0.55
   hipdip: 0.001
 --- !u!114 &430108200082163063
 MonoBehaviour:

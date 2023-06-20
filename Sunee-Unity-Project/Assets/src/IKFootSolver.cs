@@ -52,10 +52,9 @@ public class IKFootSolver : MonoBehaviour
         Ray ray = new Ray(body.position + (body.right * footSpacing) + (body.up * stepHeight), Vector3.down);
         //shooting raycast downward to determine current able leg offset from hip position    
         if (Physics.Raycast(ray, out RaycastHit info, 100, terrainLayer.value)) {
-            Debug.Log("ray is hit");
             //conditions for initiating a step
             //change here to add loaded bool for stepping condition, change step length to step distance
-            if (Vector3.Distance(newPosition, info.point) > stepDistance && lerp >= 1 && HipMover.Moving == false) {
+            if (Vector3.Distance(newPosition, info.point) > stepDistance && lerp >= 1 && HipMover.Moving == false && positionManager.loaded == true) {
                 lerp = 0;
                 int direction = body.InverseTransformPoint(info.point).z > body.InverseTransformPoint(newPosition).z ? 1 : -1;
                 newPosition = info.point + (body.forward * stepLength * direction) + footOffset;
@@ -64,6 +63,7 @@ public class IKFootSolver : MonoBehaviour
         }
         else
         {
+            //ray debugging
             Debug.DrawRay(body.position + (body.right * footSpacing), Vector3.down, Color.red);
             Debug.Log("Did not Hit" + body.position + (body.right * footSpacing));
         }

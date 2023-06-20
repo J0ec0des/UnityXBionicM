@@ -60,6 +60,8 @@ public class positionManager : MonoBehaviour
     public static float stepDistance;
     public float currentxpos;
 
+    public static float ankly;
+
 
     // Start is called before the first frame update, coroutine
     IEnumerator Start()
@@ -112,6 +114,8 @@ public class positionManager : MonoBehaviour
             kneetarget = new Vector3(knee_x, knee_y, knee_z);
             ankltarget = new Vector3(knee_x + ankl_x, knee_y + ankl_y, knee_z + ankl_z);
             
+            ankly = knee_y + ankl_y;
+
             float time = 0;
             while (time < (data.interval * 0.001f))
             {

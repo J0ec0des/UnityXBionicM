@@ -28,21 +28,14 @@ public class HipMover : MonoBehaviour
     float time = 0.5f;
     void Update()
     {
-		// if(time >= 0){
-		// 	time -= Time.deltaTime;
-		// 	return;
-		//}else{
-            TryHipSim();
-            Debug.Log(Moving + "moving");
-		//}
-       //Do Something else while clock counting down        
-
+        TryHipSim();
+        Debug.Log(Moving + "moving" + prostheticFoot.position.y);
     }
     public void TryHipSim() 
     {
         Debug.Log(positionManager.loaded + "cadload");
         if (Moving) return;
-        if (positionManager.loaded == false && Moving ==false)
+        if (positionManager.loaded == false && Moving == false)
         {
             //Start moving hip
             StartCoroutine(MoveHipsim());
@@ -104,7 +97,7 @@ public class HipMover : MonoBehaviour
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
 
             hipmodel.transform.position = localPos;
-            yield return null;
+            yield return new WaitForEndOfFrame();
         } while (timeelapsed < moveDuration);
         Moving = false;
     }
@@ -112,21 +105,17 @@ public class HipMover : MonoBehaviour
     {
         //move hip fuction when the prosthetic is on the ground.
         Vector3 localPos = hipmodel.transform.position;
-        localPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
+        //localPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
+        localPos.y = ground.position.y - positionManager.ankly + offsetfromgnd;
         hipmodel.transform.position = Vector3.MoveTowards(hipmodel.transform.position, localPos, 100f);    
         //may add interpolation function is resultant animation is janky
         Debug.Log(localPos.y + "cadposy");
 
         //move target body as well according to hip
         Vector3 targetPos = targetmodel.transform.position;
-        targetPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
+        //targetPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
+        targetPos.y = ground.position.y - positionManager.ankly + offsetfromgnd;
         targetmodel.transform.position = Vector3.MoveTowards(targetmodel.transform.position, targetPos, 100f); 
-        yield return null;  
+        yield return new WaitForEndOfFrame(); 
     }
-
-    // void LateUpdate()
-    // {
-    //     //insert animation related functions here so environment is deveoped-> animation -> frame rendered
-    // }
-
 }
