@@ -57,9 +57,8 @@ public class positionManager : MonoBehaviour
     //placeholder for body speed variable, will change according to speed determination by prosthetic
     // delete value when implementing speed variation(experimental script 2)
 
-    public float stepDistance;
+    public static float stepDistance;
     public float currentxpos;
-
 
 
     // Start is called before the first frame update, coroutine
@@ -67,6 +66,8 @@ public class positionManager : MonoBehaviour
     {
         script = GetComponent<Readingcsv>();
         yield return new WaitForEndOfFrame();
+        StartCoroutine(PreDelay());
+        yield return new WaitForSeconds(2.5f);
         foreach (Posdata data in script.position) {
             //hip.transform.localPosition = new Vector3(data.hip_pos_x * 10, data.hip_pos_z * 10, data.hip_pos_y * 10 ); 
             //removed due to values being 0.
@@ -79,12 +80,20 @@ public class positionManager : MonoBehaviour
             //first using current vector3 function types:
             // kneetarget = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
             // ankltarget = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
-            positionManager.cadence = data.cadence;
-            if (data.loaded == 1) {
+
+            //Moved to predelay func
+            //positionManager.cadence = data.cadence;
+            if (data.loaded == 1) 
+            {
                 positionManager.loaded = true;
             }
-            else {
+            else if (data.loaded == 0) 
+            {
                 positionManager.loaded = false;
+            }
+            else 
+            {
+                Debug.Log("exeptionerror");
             }
             Debug.Log(positionManager.loaded + "cadpos");
             float globalknee_angl = data.hip_angl + data.knee_angl;
@@ -110,11 +119,9 @@ public class positionManager : MonoBehaviour
                 knee.transform.localPosition = Vector3.Lerp(knee.transform.localPosition, kneetarget, time / data.interval);
                 time += Time.deltaTime;
                 yield return null;
-                //Debug.Log("lerped");
+                Debug.Log("force lerped");
             }
 
-            //saving xpos as value
-            currentxpos = knee_x + ankl_x;
 
             //Experimental script2(speed variation)
             //speed = data.hip_speed;
@@ -129,6 +136,7 @@ public class positionManager : MonoBehaviour
             {
                 //force move
                 knee.transform.localPosition = kneetarget;
+                Debug.Log("force moved");
             }
             if (Vector3.Distance(ankl.transform.localPosition, ankltarget) > 0.001f)
             {
@@ -139,37 +147,71 @@ public class positionManager : MonoBehaviour
 
         }
     }
+    IEnumerator PreDelay()
+    {
+        foreach (Posdata data in script.position) {
+            float globalknee_angl = data.hip_angl + data.knee_angl;
+            float B = (Mathf.PI / 2) - data.hip_abduction;
+            float thighA = (Mathf.PI / 2) - data.hip_angl;
+            float shinA = (Mathf.PI / 2) - globalknee_angl;
+            float knee_x = -1f * Scalemanager.thigh_length * Mathf.Cos(thighA) * Mathf.Sin(B) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(thighA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
+            float ankl_x = -1f * Scalemanager.shin_length * Mathf.Cos(shinA) * Mathf.Sin(B) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
+            positionManager.cadence = data.cadence;
+            if (data.loaded == 1 && loadbool == false) 
+            {
+                loadbool = true;
+            }
+            else if (data.loaded == 0 && loadbool == true) 
+            {
+                loadbool = false;
+            }
+            else 
+            {
+                Debug.Log("exeptionerror predelay");
+            }
+        //saving xpos as value
+        currentxpos = knee_x + ankl_x;
+        yield return new WaitForSeconds(data.interval * 0.001f);
+        }
+    }
     
     // Update is called once per frame
-    void Update()
+    void LateUpdate()
     {
-        //transform.Translate(Vector3.right * bodyspeed * Time.deltaTime);
+        transform.Translate(Vector3.right * (GetBodySpeed() + 0.1f) * Time.deltaTime);
         //adding speed to character model
         
     }
 
-    private float lastpos = 0;
+    public float lastpos;
     private void GetFootLength() 
     {
-        stepDistance = ((currentxpos) - lastpos) / 2;
-        lastpos = currentxpos;
+        stepDistance = (lastpos - currentxpos) / 2;
     }
-    float GetBodySpeed(float stepdistance)
+    float GetBodySpeed()
     {
-        float speed = stepdistance * positionManager.cadence;
+        float speed = stepDistance * positionManager.cadence / 60;
         return speed;
     }
 
     // //check if loaded is changed
-    private bool _boolValue;
-    public bool BoolValue
+    private bool _loadbool;
+    public bool loadbool
     {
-        get { return _boolValue; }
+        get { return _loadbool; }
         set
         {
-            _boolValue = value;
             //triggering x-value recorder
-            GetFootLength();
+            if (_loadbool == false && value == true)
+            {
+                lastpos = currentxpos;
+            }
+            if (_loadbool == true && value == false)
+            {
+                GetFootLength();
+                Debug.Log("boolchanged" + stepDistance);
+            }
+            _loadbool = value;
         }
     }
 }

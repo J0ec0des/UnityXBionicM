@@ -16,7 +16,7 @@ public class HipMover : MonoBehaviour
     [SerializeField] float offsetfromgnd = 1f;
     [SerializeField] float hipdip = 0.85f;
 
-    public bool Moving = false;
+    public static bool Moving = false;
 
     // Start is called before the first frame update
     void Start()
@@ -50,7 +50,7 @@ public class HipMover : MonoBehaviour
         }
         if (positionManager.loaded == true) 
         {
-            MoveHippros();
+            StartCoroutine(MoveHippros());
         }
         else
         {
@@ -59,6 +59,8 @@ public class HipMover : MonoBehaviour
     }
     float FindHipY(Transform groundpos, Transform footpos)
     {
+        //finding the y-value of the hip from the distance from foot position of pprosthetic to ground
+        //i.e. when loaded, foot position y-val = ground y-val
         float loadedhipY = groundpos.position.y - footpos.position.y;
         //change here for height determination
         return loadedhipY;
@@ -69,6 +71,7 @@ public class HipMover : MonoBehaviour
         float moveDuration = 60 / positionManager.cadence;
         if (moveDuration > 5f) {
             Moving = false;
+            Debug.Log("break was called");
             yield break;
         } 
         Debug.Log(moveDuration + "dura" + positionManager.cadence + "cad");
@@ -81,7 +84,7 @@ public class HipMover : MonoBehaviour
         {
             if (positionManager.loaded == true) 
             {
-                MoveHippros();
+                StartCoroutine(MoveHippros());
                 Moving = false;
                 Debug.Log("broken");
                 yield break;
@@ -105,19 +108,20 @@ public class HipMover : MonoBehaviour
         } while (timeelapsed < moveDuration);
         Moving = false;
     }
-    void MoveHippros() 
+    IEnumerator MoveHippros() 
     {
         //move hip fuction when the prosthetic is on the ground.
         Vector3 localPos = hipmodel.transform.position;
         localPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
-        hipmodel.transform.position = localPos;   
+        hipmodel.transform.position = Vector3.MoveTowards(hipmodel.transform.position, localPos, 100f);    
         //may add interpolation function is resultant animation is janky
         Debug.Log(localPos.y + "cadposy");
 
         //move target body as well according to hip
         Vector3 targetPos = targetmodel.transform.position;
         targetPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
-        targetmodel.transform.position = targetPos;   
+        targetmodel.transform.position = Vector3.MoveTowards(targetmodel.transform.position, targetPos, 100f); 
+        yield return null;  
     }
 
     // void LateUpdate()

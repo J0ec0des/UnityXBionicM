@@ -30,6 +30,8 @@ public class IKFootSolver : MonoBehaviour
 
     public GameObject rightfoot;
 
+    public GameObject toeiktarget;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -43,23 +45,27 @@ public class IKFootSolver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        stepLength = positionManager.stepDistance;
         transform.position = currentPosition;
         //transform.forward = -currentNormal;
         //Debug.Log(transform.forward.ToString("F5"));
-
-        Ray ray = new Ray(body.position + (body.right * footSpacing), Vector3.down);
+        Ray ray = new Ray(body.position + (body.right * footSpacing) + (body.up * stepHeight), Vector3.down);
         //shooting raycast downward to determine current able leg offset from hip position    
-        if (Physics.Raycast(ray, out RaycastHit info, 10, terrainLayer.value)) {
-
+        if (Physics.Raycast(ray, out RaycastHit info, 100, terrainLayer.value)) {
+            Debug.Log("ray is hit");
             //conditions for initiating a step
             //change here to add loaded bool for stepping condition, change step length to step distance
-            if (Vector3.Distance(newPosition, info.point) > stepDistance && lerp >= 1) {
+            if (Vector3.Distance(newPosition, info.point) > stepDistance && lerp >= 1 && HipMover.Moving == false) {
                 lerp = 0;
                 int direction = body.InverseTransformPoint(info.point).z > body.InverseTransformPoint(newPosition).z ? 1 : -1;
                 newPosition = info.point + (body.forward * stepLength * direction) + footOffset;
                 //newNormal = info.normal;
-                Debug.Log("ray is hit");
             }
+        }
+        else
+        {
+            Debug.DrawRay(body.position + (body.right * footSpacing), Vector3.down, Color.red);
+            Debug.Log("Did not Hit" + body.position + (body.right * footSpacing));
         }
 
         if (lerp < 1) {
