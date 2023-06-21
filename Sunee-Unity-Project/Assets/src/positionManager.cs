@@ -60,6 +60,8 @@ public class positionManager : MonoBehaviour
     public static float stepDistance;
     public float currentxpos;
 
+    public static float footcurrentxpos;
+
     public static float ankly;
 
 
@@ -115,6 +117,7 @@ public class positionManager : MonoBehaviour
             ankltarget = new Vector3(knee_x + ankl_x, knee_y + ankl_y, knee_z + ankl_z);
             
             ankly = knee_y + ankl_y;
+            footcurrentxpos = knee_x + ankl_x;
 
             float time = 0;
             while (time < (data.interval * 0.001f))

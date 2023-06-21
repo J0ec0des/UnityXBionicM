@@ -25,11 +25,15 @@ public class HipMover : MonoBehaviour
     }
 
     // Update is called once per frame
-    float time = 0.5f;
-    void Update()
-    {
-        TryHipSim();
-        Debug.Log(Moving + "moving" + prostheticFoot.position.y);
+    float time = 2.8f;
+	void Update () {
+
+		if(time >= 0){
+			time -= Time.deltaTime;
+		}else{
+		    TryHipSim();
+            Debug.Log(Moving + "moving" + prostheticFoot.position.y);
+		}
     }
     public void TryHipSim() 
     {
@@ -97,7 +101,7 @@ public class HipMover : MonoBehaviour
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
 
             hipmodel.transform.position = localPos;
-            yield return new WaitForEndOfFrame();
+            yield return null;
         } while (timeelapsed < moveDuration);
         Moving = false;
     }

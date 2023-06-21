@@ -28,6 +28,8 @@ public class IKFootSolver : MonoBehaviour
     Vector3 oldNormal, currentNormal, newNormal;
     float lerp;
 
+    //Vector3 footrotoffset = (90f, 0f, 0f);
+
     public GameObject rightfoot;
 
     public GameObject toeiktarget;
@@ -35,11 +37,19 @@ public class IKFootSolver : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log("normalstart" + transform.rotation);
         //transform.position = rightfoot.transform.position;
         footSpacing = transform.localPosition.x;
         currentPosition = newPosition = oldPosition = transform.position;
-        //currentNormal = newNormal = oldNormal = -transform.forward;
+        currentNormal = newNormal = oldNormal = -transform.forward;
         lerp = 1; 
+        
+    }
+
+    Quaternion approxLookRotation(Vector3 approximateForward, Vector3 exactUp) {
+        Quaternion zToUp = Quaternion.LookRotation(exactUp, -approximateForward);
+        Quaternion yToz = Quaternion.Euler(90, 0, 0);
+        return zToUp * yToz;
     }
 
     // Update is called once per frame
@@ -47,18 +57,20 @@ public class IKFootSolver : MonoBehaviour
     {
         stepLength = positionManager.stepDistance;
         transform.position = currentPosition;
-        //transform.forward = -currentNormal;
+        transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(105, 0, 0);
+        // Debug.Log("normal" + body.forward);
+        //  Debug.DrawRay(body.position, body.forward, Color.red, 180);
         //Debug.Log(transform.forward.ToString("F5"));
         Ray ray = new Ray(body.position + (body.right * footSpacing) + (body.up * stepHeight), Vector3.down);
         //shooting raycast downward to determine current able leg offset from hip position    
         if (Physics.Raycast(ray, out RaycastHit info, 100, terrainLayer.value)) {
             //conditions for initiating a step
             //change here to add loaded bool for stepping condition, change step length to step distance
-            if (Vector3.Distance(newPosition, info.point) > stepDistance && lerp >= 1 && HipMover.Moving == false && positionManager.loaded == true) {
+            if (Vector3.Distance(newPosition, info.point) > stepDistance && lerp >= 1 && HipMover.Moving == false && positionManager.loaded == true && positionManager.footcurrentxpos < 2) {
                 lerp = 0;
                 int direction = body.InverseTransformPoint(info.point).z > body.InverseTransformPoint(newPosition).z ? 1 : -1;
                 newPosition = info.point + (body.forward * stepLength * direction) + footOffset;
-                //newNormal = info.normal;
+                newNormal = info.normal;
             }
         }
         else
@@ -72,12 +84,14 @@ public class IKFootSolver : MonoBehaviour
             Vector3 tempPosition = Vector3.Lerp(oldPosition, newPosition, lerp);
             tempPosition.y += Mathf.Sin(lerp * Mathf.PI) * stepHeight;
             currentPosition = tempPosition;
-            //currentNormal = Vector3.Lerp(oldNormal, newNormal, lerp);
+            Vector3 tempNormal = Vector3.Lerp(oldNormal, newNormal, lerp);
+            tempNormal.x += Mathf.Sin(lerp * 2 * Mathf.PI + 0.2f) * stepHeight;
+            currentNormal = tempNormal;
             lerp += Time.deltaTime * speed;
         }
         else {
             oldPosition = newPosition;
-            //oldNormal = newNormal;
+            oldNormal = newNormal;
         }
     }
 
