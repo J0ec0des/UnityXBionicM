@@ -33,6 +33,7 @@ public class positionManager : MonoBehaviour
     //likely unnecessry
     public GameObject hip;
     
+    //init target objects that are manipulated by transform 
     public GameObject knee;
     
     public GameObject ankl;
@@ -41,28 +42,15 @@ public class positionManager : MonoBehaviour
 
     public Vector3 kneetarget, ankltarget;
 
-    public static float cadence;
-    public static bool loaded = true;
+    public static float cadence; //init cadence value for global access
+    public static bool loaded = true; //init loaded bool for global access
 
-    //Add for experimental script 1:
-    //[SerializeField]public float thigh_length = 4;
-    //[SerializeField]public float shin_length = 4; <-variable value that must be solved
-
-    
-    // public List<Hiplist> position = new List<Hiplist>();
-    // public List<Kneelist> kneeposition = new List<Kneelist>();
-    // public List<Ankllist> anklposition = new List<Ankllist>();
-
-    public float bodyspeed = 4;
-    //placeholder for body speed variable, will change according to speed determination by prosthetic
-    // delete value when implementing speed variation(experimental script 2)
-
-    public static float stepDistance;
+    public static float stepDistance; //init step distance var for global access
     public float currentxpos;
 
-    public static float footcurrentxpos;
+    public static float footcurrentxpos; //init current x-position of proshetic foot for global access
 
-    public static float ankly;
+    public static float ankly; //init current y-position of proshetic foot for global access
 
 
     // Start is called before the first frame update, coroutine
@@ -71,8 +59,10 @@ public class positionManager : MonoBehaviour
         script = GetComponent<Readingcsv>();
         yield return new WaitForEndOfFrame();
         StartCoroutine(PreDelay());
-        yield return new WaitForSeconds(2.5f);
+        yield return new WaitForSeconds(1.75f);
         foreach (Posdata data in script.position) {
+
+            /*
             //hip.transform.localPosition = new Vector3(data.hip_pos_x * 10, data.hip_pos_z * 10, data.hip_pos_y * 10 ); 
             //removed due to values being 0.
 
@@ -84,6 +74,7 @@ public class positionManager : MonoBehaviour
             //first using current vector3 function types:
             // kneetarget = new Vector3(data.knee_pos_x * 10, data.knee_pos_z * 10, data.knee_pos_y * 10);
             // ankltarget = new Vector3(data.ankl_pos_x * 10, data.ankl_pos_z * 10, data.ankl_pos_y * 10);
+            */
 
             //Moved to predelay func
             //positionManager.cadence = data.cadence;
@@ -99,7 +90,7 @@ public class positionManager : MonoBehaviour
             {
                 Debug.Log("exeptionerror");
             }
-            Debug.Log(positionManager.loaded + "cadpos");
+
             float globalknee_angl = data.hip_angl + data.knee_angl;
             float B = (Mathf.PI / 2) - data.hip_abduction;
             float thighA = (Mathf.PI / 2) - data.hip_angl;
@@ -113,6 +104,8 @@ public class positionManager : MonoBehaviour
             float ankl_z = Scalemanager.shin_length * Mathf.Cos(B) * Mathf.Sin(shinA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
             float ankl_y = -1f * Scalemanager.shin_length * Mathf.Sin(B) * Mathf.Sin(shinA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
 
+
+            //saving values as Vector3
             kneetarget = new Vector3(knee_x, knee_y, knee_z);
             ankltarget = new Vector3(knee_x + ankl_x, knee_y + ankl_y, knee_z + ankl_z);
             
@@ -122,21 +115,13 @@ public class positionManager : MonoBehaviour
             float time = 0;
             while (time < (data.interval * 0.001f))
             {
+                //actions to take during the interval between each data value parsed and applied
                 ankl.transform.localPosition = Vector3.Lerp(ankl.transform.localPosition, ankltarget, time / data.interval);
                 knee.transform.localPosition = Vector3.Lerp(knee.transform.localPosition, kneetarget, time / data.interval);
                 time += Time.deltaTime;
                 yield return null;
                 Debug.Log("force lerped");
             }
-
-
-            //Experimental script2(speed variation)
-            //speed = data.hip_speed;
-
-            //yield return new WaitForSeconds(0.005f);
-            //change upper value for refresh rate of serial connection
-            //potential and/or necessity for automation once serial connication logistics are updated
-            //*temporarily removed for lerp function
 
             // Check if the position of the target and actual are approximately equal.
             if (Vector3.Distance(knee.transform.localPosition, kneetarget) > 0.001f)
@@ -149,14 +134,15 @@ public class positionManager : MonoBehaviour
             {
                 //force move
                 ankl.transform.localPosition = ankltarget;
-                //Debug.Log("catch exception");
             }
 
         }
     }
     IEnumerator PreDelay()
     {
+        //coroutine that reads the list before the function that assigns object transform reads the list.
         foreach (Posdata data in script.position) {
+            //altering values for easier calculations
             float globalknee_angl = data.hip_angl + data.knee_angl;
             float B = (Mathf.PI / 2) - data.hip_abduction;
             float thighA = (Mathf.PI / 2) - data.hip_angl;
@@ -185,7 +171,7 @@ public class positionManager : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        transform.Translate(Vector3.right * (GetBodySpeed() + 0.1f) * Time.deltaTime);
+        transform.Translate(Vector3.right * (GetBodySpeed() * 1.15f) * Time.deltaTime);
         //adding speed to character model
         
     }

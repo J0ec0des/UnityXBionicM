@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//referencing inverse kinematics package
+using UnityEngine.Animations.Rigging;
+
 //This is the script governing the position of the prediction foot(able leg)
 
 public class IKFootSolver : MonoBehaviour
@@ -24,49 +27,61 @@ public class IKFootSolver : MonoBehaviour
     [SerializeField] Vector3 footOffset = default;
     //initial offset between the two feet
     float footSpacing;
+    //spacing between the foot and the center of body 
+
+    //vars for stepping, olf, current, and target
     Vector3 oldPosition, currentPosition, newPosition;
     Vector3 oldNormal, currentNormal, newNormal;
     float lerp;
 
-    //Vector3 footrotoffset = (90f, 0f, 0f);
+    //reference for inverse kinematics component
+    public TwoBoneIKConstraint constraint;
+    public GameObject toeik;
+
 
     public GameObject rightfoot;
 
     public GameObject toeiktarget;
 
+    [SerializeField] Vector3 toeoffsetfromfoot;
+
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("normalstart" + transform.rotation);
-        //transform.position = rightfoot.transform.position;
+        //initializing foot spacing and other initial positions related to foot
         footSpacing = transform.localPosition.x;
         currentPosition = newPosition = oldPosition = transform.position;
         currentNormal = newNormal = oldNormal = -transform.forward;
         lerp = 1; 
-        
+
+        constraint = toeik.GetComponent<TwoBoneIKConstraint>(); //init of toe ik constraint for access
     }
 
     Quaternion approxLookRotation(Vector3 approximateForward, Vector3 exactUp) {
+        //function to make object face a certain approximate direction with an assigned up vector
         Quaternion zToUp = Quaternion.LookRotation(exactUp, -approximateForward);
-        Quaternion yToz = Quaternion.Euler(90, 0, 0);
+        Quaternion yToz = Quaternion.Euler(110, 0, 0);   //adding static offset
         return zToUp * yToz;
     }
 
     // Update is called once per frame
     void Update()
     {
+        Debug.Log(positionManager.loaded + "loaded?" + positionManager.footcurrentxpos);
+        //updating steplength as value is changed in positionManager script
         stepLength = positionManager.stepDistance;
+        //setting transform
         transform.position = currentPosition;
         transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(105, 0, 0);
-        // Debug.Log("normal" + body.forward);
-        //  Debug.DrawRay(body.position, body.forward, Color.red, 180);
-        //Debug.Log(transform.forward.ToString("F5"));
+        //setting transform for toe iktarget
+        toeiktarget.transform.position = currentPosition + toeoffsetfromfoot;
         Ray ray = new Ray(body.position + (body.right * footSpacing) + (body.up * stepHeight), Vector3.down);
         //shooting raycast downward to determine current able leg offset from hip position    
         if (Physics.Raycast(ray, out RaycastHit info, 100, terrainLayer.value)) {
             //conditions for initiating a step
             //change here to add loaded bool for stepping condition, change step length to step distance
-            if (Vector3.Distance(newPosition, info.point) > stepDistance && lerp >= 1 && HipMover.Moving == false && positionManager.loaded == true && positionManager.footcurrentxpos < 2) {
+            if (Vector3.Distance(newPosition, info.point) > stepDistance && lerp >= 1 && HipMover.Moving == false && positionManager.loaded == true && positionManager.footcurrentxpos < 2 && positionManager.footcurrentxpos > -0.5) {
+                //when conditions are met to move abled leg
                 lerp = 0;
                 int direction = body.InverseTransformPoint(info.point).z > body.InverseTransformPoint(newPosition).z ? 1 : -1;
                 newPosition = info.point + (body.forward * stepLength * direction) + footOffset;
@@ -81,17 +96,21 @@ public class IKFootSolver : MonoBehaviour
         }
 
         if (lerp < 1) {
+            //moving abled leg and rotationg objects when abled leg is moving
             Vector3 tempPosition = Vector3.Lerp(oldPosition, newPosition, lerp);
             tempPosition.y += Mathf.Sin(lerp * Mathf.PI) * stepHeight;
             currentPosition = tempPosition;
             Vector3 tempNormal = Vector3.Lerp(oldNormal, newNormal, lerp);
-            tempNormal.x += Mathf.Sin(lerp * 2 * Mathf.PI + 0.2f) * stepHeight;
+            tempNormal.x += Mathf.Sin(lerp * 2 * Mathf.PI) * stepHeight;
             currentNormal = tempNormal;
             lerp += Time.deltaTime * speed;
+            constraint.data.targetPositionWeight += 1f - Mathf.Sin(lerp *  Mathf.PI) * 5f; 
+            //changing weight of inverse kinematics for toe so that rotation is function is applied once the foot leaves the ground
         }
         else {
             oldPosition = newPosition;
             oldNormal = newNormal;
+            constraint.data.targetPositionWeight = 1f;
         }
     }
 

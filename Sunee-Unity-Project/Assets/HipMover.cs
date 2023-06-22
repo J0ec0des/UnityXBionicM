@@ -32,26 +32,28 @@ public class HipMover : MonoBehaviour
 			time -= Time.deltaTime;
 		}else{
 		    TryHipSim();
-            Debug.Log(Moving + "moving" + prostheticFoot.position.y);
+            Debug.Log("ankly" + positionManager.ankly);
 		}
     }
     public void TryHipSim() 
     {
-        Debug.Log(positionManager.loaded + "cadload");
+        //function for checking which hip to move
         if (Moving) return;
-        if (positionManager.loaded == false && Moving == false)
+        if (positionManager.loaded == false && Moving == false && positionManager.ankly > -7.8) //this condition is iffy, must change to variable value to account for height differences
         {
-            //Start moving hip
+            //Start moving hip(abled leg is loaded)
             StartCoroutine(MoveHipsim());
             
         }
         if (positionManager.loaded == true) 
         {
+            //Start moving hip(prosthetic is loaded)
             StartCoroutine(MoveHippros());
         }
         else
         {
             Debug.Log("Loaded null exception");
+            //exeption thrown when neither conditions are met, most likely when prosthetic is loaded but no horizontal movement
         }
     }
     float FindHipY(Transform groundpos, Transform footpos)
@@ -93,10 +95,10 @@ public class HipMover : MonoBehaviour
                 Mathf.Lerp(startpos.y, hipdip, normalizedTime),
                 Mathf.Lerp(hipdip, startpos.y, normalizedTime),
                 normalizedTime
-            );
-            //quadratic bezier curve made by nested linear interpolation, returns to startpos
+            );  //quadratic bezier curve made by nested linear interpolation, returns to startpos
             //must alter bezier curve accordingly to gait
             Debug.Log("movinghipsim");
+
             //version using a sine curve
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
 
@@ -105,6 +107,7 @@ public class HipMover : MonoBehaviour
         } while (timeelapsed < moveDuration);
         Moving = false;
     }
+    
     IEnumerator MoveHippros() 
     {
         //move hip fuction when the prosthetic is on the ground.
@@ -112,7 +115,6 @@ public class HipMover : MonoBehaviour
         //localPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
         localPos.y = ground.position.y - positionManager.ankly + offsetfromgnd;
         hipmodel.transform.position = Vector3.MoveTowards(hipmodel.transform.position, localPos, 100f);    
-        //may add interpolation function is resultant animation is janky
         Debug.Log(localPos.y + "cadposy");
 
         //move target body as well according to hip
