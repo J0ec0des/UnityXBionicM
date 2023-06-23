@@ -39,7 +39,7 @@ public class HipMover : MonoBehaviour
     {
         //function for checking which hip to move
         if (Moving) return;
-        if (positionManager.loaded == false && Moving == false && positionManager.ankly > -7.8) //this condition is iffy, must change to variable value to account for height differences
+        if (positionManager.loaded == false && Moving == false && positionManager.ankly > -5.8 * Scalemanager.height_normalized) //change 5.8 after further gait analysis and debugging
         {
             //Start moving hip(abled leg is loaded)
             StartCoroutine(MoveHipsim());
@@ -107,7 +107,7 @@ public class HipMover : MonoBehaviour
         } while (timeelapsed < moveDuration);
         Moving = false;
     }
-    
+
     IEnumerator MoveHippros() 
     {
         //move hip fuction when the prosthetic is on the ground.
