@@ -60,7 +60,7 @@ public class IKFootSolver : MonoBehaviour
     Quaternion approxLookRotation(Vector3 approximateForward, Vector3 exactUp) {
         //function to make object face a certain approximate direction with an assigned up vector
         Quaternion zToUp = Quaternion.LookRotation(exactUp, -approximateForward);
-        Quaternion yToz = Quaternion.Euler(110, 0, 0);   //adding static offset
+        Quaternion yToz = Quaternion.Euler(115, 0, 0);   //adding static offset
         return zToUp * yToz;
     }
 
@@ -69,7 +69,7 @@ public class IKFootSolver : MonoBehaviour
     {
         Debug.Log(positionManager.loaded + "loaded?" + positionManager.footcurrentxpos);
         //updating steplength as value is changed in positionManager script
-        stepLength = positionManager.stepDistance;
+        stepLength = positionManager.stepDistance * 1.15f;
         //setting transform
         transform.position = currentPosition;
         transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(105, 0, 0);
@@ -100,11 +100,33 @@ public class IKFootSolver : MonoBehaviour
             Vector3 tempPosition = Vector3.Lerp(oldPosition, newPosition, lerp);
             tempPosition.y += Mathf.Sin(lerp * Mathf.PI) * stepHeight;
             currentPosition = tempPosition;
+            float deg;
+            float norm = 66 + lerp * 34;
+            // if (lerp < 0.2) {
+            //     deg =(float)(  -0.0054751845*Mathf.Pow(norm, 3) + 0.2149898019*Mathf.Pow(lerp*100, 2) - 1.8707711733*Mathf.Pow(lerp*100, 1) + 0.3400000000);
+            // }
+            // else if (lerp < 0.44) {
+            //     deg =(float)( 0.1922527473*lerp*100 + 1.4202197802);
+            // }
+            if (norm < 66) {
+                deg =(float)(  0.0071365903*Mathf.Pow(norm, 3) - 1.2115477578*Mathf.Pow(norm, 2) + 66.3101180301*Mathf.Pow(norm, 1) - 1171.1960683760);
+
+            }
+            else if (norm < 0.84) {
+                deg =(float)(  -0.0316856061*Mathf.Pow(norm, 2) + 5.9569924242*Mathf.Pow(norm, 1) - 276.0722727273);
+
+            }
+            else {
+                deg =(float)(  -0.0028198653*Mathf.Pow(norm, 3) + 0.7850036075*Mathf.Pow(norm, 2) - 72.6188792689*Mathf.Pow(norm, 1) + 2232.4724242423);
+
+            }
             Vector3 tempNormal = Vector3.Lerp(oldNormal, newNormal, lerp);
-            tempNormal.x += Mathf.Sin(lerp * 2 * Mathf.PI) * stepHeight;
+            tempNormal.x += Mathf.Sin(Mathf.Deg2Rad * deg)/*Mathf.Sin(lerp * 2 * Mathf.PI) * stepHeight;*/;
+            Debug.Log("xnorm" + deg);
             currentNormal = tempNormal;
             lerp += Time.deltaTime * speed;
-            constraint.data.targetPositionWeight += 1f - Mathf.Sin(lerp *  Mathf.PI) * 5f; 
+            constraint.data.targetPositionWeight = 0;
+            //constraint.data.targetPositionWeight += 1f - Mathf.Sin(lerp *  Mathf.PI) * 5f; 
             //changing weight of inverse kinematics for toe so that rotation is function is applied once the foot leaves the ground
         }
         else {

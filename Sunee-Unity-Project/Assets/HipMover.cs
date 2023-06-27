@@ -17,11 +17,14 @@ public class HipMover : MonoBehaviour
     [SerializeField] float hipdip = 0.85f;
 
     public static bool Moving = false;
+    public bool movingpros = false;
+    public Quaternion startrot;
 
+    public float magnitude;
     // Start is called before the first frame update
     void Start()
     {
-        
+        startrot = hipmodel.transform.rotation;
     }
 
     // Update is called once per frame
@@ -32,7 +35,7 @@ public class HipMover : MonoBehaviour
 			time -= Time.deltaTime;
 		}else{
 		    TryHipSim();
-            Debug.Log("ankly" + positionManager.ankly);
+            magnitude = (float)(positionManager.stepDistance / 2.855);
 		}
     }
     public void TryHipSim() 
@@ -49,6 +52,10 @@ public class HipMover : MonoBehaviour
         {
             //Start moving hip(prosthetic is loaded)
             StartCoroutine(MoveHippros());
+            if (movingpros == false)
+            {
+                StartCoroutine(Moveprosrot());
+            }
         }
         else
         {
@@ -78,7 +85,8 @@ public class HipMover : MonoBehaviour
         //Move hip function when the able leg is on the ground
         //use stepDistance to find period of sine curve
         Vector3 startpos = hipmodel.transform.position;
-
+        Quaternion endrot = startrot * Quaternion.Euler(0, magnitude * -7.8f, 0); //setting the goal of that the rotation of the hip will end up on
+        Quaternion begRot = hipmodel.transform.rotation; // setting up initial rotaiton of the hip at execution for constant linear interpolation
         do
         {
             if (positionManager.loaded == true) 
@@ -97,12 +105,17 @@ public class HipMover : MonoBehaviour
                 normalizedTime
             );  //quadratic bezier curve made by nested linear interpolation, returns to startpos
             //must alter bezier curve accordingly to gait
-            Debug.Log("movinghipsim");
+    
+
+            Quaternion localRot = Quaternion.Lerp(begRot, endrot, normalizedTime);
+            //executing rot interpolation
 
             //version using a sine curve
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
 
             hipmodel.transform.position = localPos;
+            hipmodel.transform.rotation = localRot;
+            Debug.Log("movinghipsim");
             yield return null;
         } while (timeelapsed < moveDuration);
         Moving = false;
@@ -123,5 +136,36 @@ public class HipMover : MonoBehaviour
         targetPos.y = ground.position.y - positionManager.ankly + offsetfromgnd;
         targetmodel.transform.position = Vector3.MoveTowards(targetmodel.transform.position, targetPos, 100f); 
         yield return new WaitForEndOfFrame(); 
+    }
+    IEnumerator Moveprosrot()
+    {
+        movingpros = true;
+        float moveDuration = 60 / positionManager.cadence;
+        if (moveDuration > 5f) {
+            movingpros = false;
+            Debug.Log("break was called");
+            yield break;
+        } 
+        float timeelapsed = 0f;
+        Quaternion endrot = startrot * Quaternion.Euler(0, 7.8f, 0); //setting rotation goal as the opposite from the simulated version
+        Quaternion begRot = hipmodel.transform.rotation;
+        do
+        {
+            if (positionManager.loaded == false) 
+            {
+                StartCoroutine(MoveHipsim());
+                movingpros = false;
+                Debug.Log("brokenhip");
+                yield break;
+            }
+            timeelapsed += Time.deltaTime;
+            float normalizedTime = timeelapsed / moveDuration;
+
+            Quaternion localRot = Quaternion.Lerp(begRot, endrot, normalizedTime);
+            hipmodel.transform.rotation = localRot;
+            Debug.Log("movingprosrot");
+            yield return null;
+        } while (timeelapsed < moveDuration);
+        movingpros = false;
     }
 }
