@@ -98,26 +98,69 @@ public class IKFootSolver : MonoBehaviour
         if (lerp < 1) {
             //moving abled leg and rotationg objects when abled leg is moving
             Vector3 tempPosition = Vector3.Lerp(oldPosition, newPosition, lerp);
-            tempPosition.y += Mathf.Sin(lerp * Mathf.PI) * stepHeight;
+            float posnorm = (float)(lerp * 0.56 + 0.04); //normalizing lerp var for regression model
+            float temposy;
+            if (posnorm < 0.20)
+            {
+                temposy =(float)( 
+                    -0.0003347*Mathf.Pow(posnorm*100, 2) 
+                    + 0.0154286*Mathf.Pow(posnorm*100, 1)  
+                    - 0.00236440
+                );
+            }
+            else if (posnorm < 0.40)
+            {
+                temposy =(float)( 
+                    0.0002538*Mathf.Pow(posnorm*100, 2)  
+                    - 0.0226260*Mathf.Pow(posnorm*100, 1)  
+                    + 0.5193032
+                );
+            }
+            else
+            {
+                temposy =(float)( 
+                    -0.0004432*Mathf.Pow(posnorm*100, 2) 
+                    + 0.0440576*Mathf.Pow(posnorm*100, 1) 
+                    - 1.0432218
+                );
+            }
+
+            tempPosition.y += /*Mathf.Sin(lerp * Mathf.PI) * stepHeight;*/ temposy * Scalemanager.height_normalized * 12f;
+
             currentPosition = tempPosition;
             float deg;
-            float norm = 66 + lerp * 34;
+            float norm = 66f + lerp * 34f; //normalizing lerp var for regression model
             // if (lerp < 0.2) {
             //     deg =(float)(  -0.0054751845*Mathf.Pow(norm, 3) + 0.2149898019*Mathf.Pow(lerp*100, 2) - 1.8707711733*Mathf.Pow(lerp*100, 1) + 0.3400000000);
             // }
             // else if (lerp < 0.44) {
             //     deg =(float)( 0.1922527473*lerp*100 + 1.4202197802);
             // }
+            //parametric model of ankle angle during step
             if (norm < 66) {
-                deg =(float)(  0.0071365903*Mathf.Pow(norm, 3) - 1.2115477578*Mathf.Pow(norm, 2) + 66.3101180301*Mathf.Pow(norm, 1) - 1171.1960683760);
+                deg =(float)(
+                    0.0071365903*Mathf.Pow(norm, 3) 
+                    - 1.2115477578*Mathf.Pow(norm, 2) 
+                    + 66.3101180301*Mathf.Pow(norm, 1) 
+                    - 1171.1960683760
+                );
 
             }
             else if (norm < 0.84) {
-                deg =(float)(  -0.0316856061*Mathf.Pow(norm, 2) + 5.9569924242*Mathf.Pow(norm, 1) - 276.0722727273);
+                deg =(float)(
+                    -0.0316856061*Mathf.Pow(norm, 2) 
+                    + 5.9569924242*Mathf.Pow(norm, 1) 
+                    - 276.0722727273
+                );
 
             }
             else {
-                deg =(float)(  -0.0028198653*Mathf.Pow(norm, 3) + 0.7850036075*Mathf.Pow(norm, 2) - 72.6188792689*Mathf.Pow(norm, 1) + 2232.4724242423);
+                deg =(float)(
+                    -0.0028198653*Mathf.Pow(norm, 3) 
+                    + 0.7850036075*Mathf.Pow(norm, 2) 
+                    - 72.6188792689*Mathf.Pow(norm, 1) 
+                    + 2232.4724242423
+                );
 
             }
             Vector3 tempNormal = Vector3.Lerp(oldNormal, newNormal, lerp);

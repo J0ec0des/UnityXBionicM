@@ -99,13 +99,31 @@ public class HipMover : MonoBehaviour
             timeelapsed += Time.deltaTime;
             float normalizedTime = timeelapsed / moveDuration;
             Vector3 localPos = hipmodel.transform.position;
-            localPos.y = Mathf.Lerp(
+            /*localPos.y = Mathf.Lerp(
                 Mathf.Lerp(startpos.y, hipdip, normalizedTime),
                 Mathf.Lerp(hipdip, startpos.y, normalizedTime),
                 normalizedTime
-            );  //quadratic bezier curve made by nested linear interpolation, returns to startpos
+            ); */ //quadratic bezier curve made by nested linear interpolation, returns to startpos
             //must alter bezier curve accordingly to gait
-    
+
+            //using mathematical model from regressed values
+            if (normalizedTime * 0.62 < 0.4)
+            {
+                localPos.y = 0.15f + offsetfromgnd + startpos.y + (float)(Scalemanager.height_normalized * 12f * (
+                    - 0.0000063*Mathf.Pow((float)(100 * normalizedTime * 0.62), 3) 
+                    + 0.0004173*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
+                    - 0.0059269*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
+                    + 0.4607267 - 0.491
+                ));
+            }
+            else if (normalizedTime * 0.62 < 0.62)
+            {
+                localPos.y = 0.15f + offsetfromgnd + startpos.y + (float)(Scalemanager.height_normalized * 12f * (
+                    - 0.0002851*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
+                    + 0.0267342*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
+                    - 0.1322132 - 0.491
+                ));
+            }
 
             Quaternion localRot = Quaternion.Lerp(begRot, endrot, normalizedTime);
             //executing rot interpolation
