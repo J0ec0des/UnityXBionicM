@@ -420,7 +420,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 145329179}
   m_LocalRotation: {x: 0.7933534, y: 0, z: 0, w: 0.6087614}
-  m_LocalPosition: {x: -0.7, y: 0.6, z: 0.05}
+  m_LocalPosition: {x: -0.7, y: 0.54, z: -0.37}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1141098783}
@@ -442,17 +442,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   body: {fileID: 543450653094964359}
-  speed: 2
   otherFoot: {fileID: 0}
-  stepDistance: 1.5
   stepLength: 3
   stepHeight: 1
-  footOffset: {x: 0.5, y: 0.68, z: 0}
+  footOffset: {x: 0.5, y: 0.4, z: 0}
   constraint: {fileID: 924618942}
   toeik: {fileID: 924618939}
   rightfoot: {fileID: 2631452999402482638}
   toeiktarget: {fileID: 1251638222}
-  toeoffsetfromfoot: {x: 1.8, y: -0.42, z: 0}
+  toeoffsetfromfoot: {x: 1.7, y: -0.44, z: 0}
 --- !u!4 &146127792 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -2655329025797423798, guid: f8a41c6b2496e48109b0175e5e866430, type: 3}
@@ -2311,7 +2309,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1251638222}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.70000017, y: 0.20000035, z: 1.0100002}
+  m_LocalPosition: {x: -0.7, y: 0.12, z: 0.94}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1128062685}

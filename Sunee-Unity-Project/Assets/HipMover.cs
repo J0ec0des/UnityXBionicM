@@ -85,6 +85,7 @@ public class HipMover : MonoBehaviour
         //Move hip function when the able leg is on the ground
         //use stepDistance to find period of sine curve
         Vector3 startpos = hipmodel.transform.position;
+        Vector3 targetstartPos = targetmodel.transform.position;
         Quaternion endrot = startrot * Quaternion.Euler(0, magnitude * -7.8f, 0); //setting the goal of that the rotation of the hip will end up on
         Quaternion begRot = hipmodel.transform.rotation; // setting up initial rotaiton of the hip at execution for constant linear interpolation
         do
@@ -99,6 +100,7 @@ public class HipMover : MonoBehaviour
             timeelapsed += Time.deltaTime;
             float normalizedTime = timeelapsed / moveDuration;
             Vector3 localPos = hipmodel.transform.position;
+            Vector3 localtarpos = targetmodel.transform.position;
             /*localPos.y = Mathf.Lerp(
                 Mathf.Lerp(startpos.y, hipdip, normalizedTime),
                 Mathf.Lerp(hipdip, startpos.y, normalizedTime),
@@ -107,18 +109,19 @@ public class HipMover : MonoBehaviour
             //must alter bezier curve accordingly to gait
 
             //using mathematical model from regressed values
+            float pos;
             if (normalizedTime * 0.62 < 0.4)
             {
-                localPos.y = 0.15f + offsetfromgnd + startpos.y + (float)(Scalemanager.height_normalized * 12f * (
+                pos = offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
                     - 0.0000063*Mathf.Pow((float)(100 * normalizedTime * 0.62), 3) 
                     + 0.0004173*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
                     - 0.0059269*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
                     + 0.4607267 - 0.491
                 ));
             }
-            else if (normalizedTime * 0.62 < 0.62)
+            else
             {
-                localPos.y = 0.15f + offsetfromgnd + startpos.y + (float)(Scalemanager.height_normalized * 12f * (
+                pos = offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
                     - 0.0002851*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
                     + 0.0267342*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
                     - 0.1322132 - 0.491
@@ -130,9 +133,12 @@ public class HipMover : MonoBehaviour
 
             //version using a sine curve
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
+            localPos.y = pos * positionManager.stepDistance / 3.9f + startpos.y + 0.17f;
+            localtarpos.y = pos * positionManager.stepDistance / 3.9f + targetstartPos.y + 0.17f;
 
             hipmodel.transform.position = localPos;
             hipmodel.transform.rotation = localRot;
+            targetmodel.transform.position = localtarpos;
             Debug.Log("movinghipsim");
             yield return null;
         } while (timeelapsed < moveDuration);
