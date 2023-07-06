@@ -42,6 +42,8 @@ public class positionManager : MonoBehaviour
 
     public Vector3 kneetarget, ankltarget;
 
+
+    //Initializing static variable that will be used accross scripts and methods.
     public static float cadence; //init cadence value for global access
     public static bool loaded = true; //init loaded bool for global access
 
@@ -96,7 +98,7 @@ public class positionManager : MonoBehaviour
             float thighA = (Mathf.PI / 2) - data.hip_angl;
             float shinA = (Mathf.PI / 2) - globalknee_angl;
 
-            //Experimental script1(angle to Vector3 positions)
+            //Angle to Vector3 conversion calculations 
             float knee_x = -1f * Scalemanager.thigh_length * Mathf.Cos(thighA) * Mathf.Sin(B) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(thighA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
             float knee_z = Scalemanager.thigh_length * Mathf.Cos(B) * Mathf.Sin(thighA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(thighA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
             float knee_y = -1f * Scalemanager.thigh_length * Mathf.Sin(B) * Mathf.Sin(thighA) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(thighA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
@@ -109,16 +111,17 @@ public class positionManager : MonoBehaviour
             kneetarget = new Vector3(knee_x, knee_y, knee_z);
             ankltarget = new Vector3(knee_x + ankl_x, knee_y + ankl_y, knee_z + ankl_z);
             
+            //Making and setting values as they will look at the very future.
             ankly = knee_y + ankl_y;
             footcurrentxpos = knee_x + ankl_x;
-
+            //Init clock for proper time scale calculation based on how often one as been running.
             float time = 0;
             while (time < (data.interval * 0.001f))
             {
                 //actions to take during the interval between each data value parsed and applied
                 ankl.transform.localPosition = Vector3.Lerp(ankl.transform.localPosition, ankltarget, time / data.interval);
                 knee.transform.localPosition = Vector3.Lerp(knee.transform.localPosition, kneetarget, time / data.interval);
-                time += Time.deltaTime;
+                time += Time.deltaTime; //updating time
                 yield return null;
                 Debug.Log("force lerped");
             }
@@ -150,6 +153,8 @@ public class positionManager : MonoBehaviour
             float knee_x = -1f * Scalemanager.thigh_length * Mathf.Cos(thighA) * Mathf.Sin(B) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(thighA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
             float ankl_x = -1f * Scalemanager.shin_length * Mathf.Cos(shinA) * Mathf.Sin(B) / Mathf.Sqrt((Mathf.Pow(Mathf.Cos(B), 2f) * Mathf.Pow(Mathf.Sin(shinA), 2f) + Mathf.Pow(Mathf.Sin(B), 2f)));
             positionManager.cadence = data.cadence;
+
+            // setting loaded booleans for globals usel
             if (data.loaded == 1 && loadbool == false) 
             {
                 loadbool = true;
@@ -181,7 +186,7 @@ public class positionManager : MonoBehaviour
     {
         stepDistance = (lastpos - currentxpos) / 2;
     }
-    float GetBodySpeed()
+    public float GetBodySpeed()
     {
         float speed = stepDistance * positionManager.cadence / 60;
         return speed;

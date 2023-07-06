@@ -38,11 +38,19 @@ public class IKFootSolver : MonoBehaviour
     //reference for inverse kinematics component
     public TwoBoneIKConstraint constraint;
     public GameObject toeik;
+    //init ik constraint as a gameobject
+    //can be deleted/made small?
+
 
 
     public GameObject rightfoot;
+    public Transform leftfoot;
 
+    //toe ik and toe ik targets
     public GameObject toeiktarget;
+    public Transform toe;
+    public Transform toehint;
+    [SerializeField] private Vector3 _forward = Vector3.forward;
 
     [SerializeField] Vector3 toeoffsetfromfoot;
 
@@ -61,7 +69,7 @@ public class IKFootSolver : MonoBehaviour
     Quaternion approxLookRotation(Vector3 approximateForward, Vector3 exactUp) {
         //function to make object face a certain approximate direction with an assigned up vector
         Quaternion zToUp = Quaternion.LookRotation(exactUp, -approximateForward);
-        Quaternion yToz = Quaternion.Euler(103, 0, 0);   //adding static offset
+        Quaternion yToz = Quaternion.Euler(100, 0, 0);   //adding static offset
         return zToUp * yToz;
     }
 
@@ -71,7 +79,7 @@ public class IKFootSolver : MonoBehaviour
         speed = 1.25f * positionManager.cadence / 60f + 0.15f;
         Debug.Log(positionManager.loaded + "loaded?" + positionManager.stepDistance);
         //updating steplength as value is changed in positionManager script
-        stepLength = positionManager.stepDistance * 1.5f;
+        stepLength = positionManager.stepDistance * 1.4f;
         stepDistance = (float)(positionManager.stepDistance / 2f);
         //setting transform
         transform.position = currentPosition;
@@ -85,13 +93,14 @@ public class IKFootSolver : MonoBehaviour
             //change here to add loaded bool for stepping condition, change step length to step distance
             if (Vector3.Distance(newPosition, info.point) > stepDistance * 1.4f && lerp >= 1 && newPosition.x-info.point.x < 0) {
                 if (Vector3.Distance(newPosition, info.point) > stepDistance * 1.8f && HipMover.Moving == false && positionManager.loaded == true && positionManager.footcurrentxpos < 2 && positionManager.footcurrentxpos > -0.5) {
-                //when conditions are met to move abled leg
-                lerp = 0;
-                int direction = body.InverseTransformPoint(info.point).z > body.InverseTransformPoint(newPosition).z ? 1 : -1;
-                newPosition = info.point + (body.forward * stepLength * direction) + footOffset;
-                newNormal = info.normal;
+                    //when conditions are met to move abled leg
+                    lerp = 0;
+                    int direction = body.InverseTransformPoint(info.point).z > body.InverseTransformPoint(newPosition).z ? 1 : -1;
+                    newPosition = info.point + (body.forward * stepLength * direction) + footOffset;
+                    newNormal = info.normal;
                 }
                 else {
+                    midPosition = oldPosition;
                     RaiseHeel(Vector3.Distance(newPosition, info.point));
                 }
             }
@@ -106,99 +115,109 @@ public class IKFootSolver : MonoBehaviour
         if (lerp < 1) {
             //moving abled leg and rotationg objects when abled leg is moving
             Vector3 tempPosition = Vector3.Lerp(midPosition, newPosition, lerp);
-            float posnorm = (float)(lerp * 0.48 + 0.12); //normalizing lerp var for regression model
-            float temposy;
-            if (posnorm < 0.20)
-            {
-                temposy =(float)( 
-                    -0.0003347*Mathf.Pow(posnorm*100, 2) 
-                    + 0.0154286*Mathf.Pow(posnorm*100, 1)  
-                    - 0.00236440
-                );
-                Debug.Log("temposy"+ temposy);
-            }
-            else if (posnorm < 0.40)
-            {
-                temposy =(float)( 
-                    0.0002538*Mathf.Pow(posnorm*100, 2)  
-                    - 0.0226260*Mathf.Pow(posnorm*100, 1)  
-                    + 0.5193032
-                );
-            }
-            else
-            {
-                temposy =(float)( 
-                    -0.0004432*Mathf.Pow(posnorm*100, 2) 
-                    + 0.0440576*Mathf.Pow(posnorm*100, 1) 
-                    - 1.0432218
-                );
-            }
 
-            tempPosition.y += /*Mathf.Sin(lerp * Mathf.PI) * stepHeight;*/ temposy * Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f;
-
+            tempPosition.y += StepHeight(lerp) * Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f;
+            Debug.Log("raisingheel" + tempPosition.y); 
             currentPosition = tempPosition;
-            float deg;
-            float norm = 60f + lerp * 40f; //normalizing lerp var for regression model
-            //parametric model of ankle angle during step
-            if (norm < 74) {
-                deg =(float)(
-                    0.6885119*Mathf.Pow(norm, 1)  
-                    - 9.5340476
-                );
-
-            }
-            else if (norm < 88) {
-                deg =(float)(
-                    -0.1562798*Mathf.Pow(norm, 2) 
-                    + 22.5995833*Mathf.Pow(norm, 1) 
-                    - 775.8403571
-
-                );
-
-            }
-            else {
-                deg =(float)(
-                    0.2430060*Mathf.Pow(norm, 2) 
-                    - 47.2838690*Mathf.Pow(norm, 1) 
-                    + 2282.2692857
-                );
-                Debug.Log("reach100");
-            }
-
             Vector3 tempNormal = Vector3.Lerp(oldNormal, newNormal, lerp);
-            tempNormal.x += Mathf.Sin(Mathf.Deg2Rad * deg)/*Mathf.Sin(lerp * 2 * Mathf.PI) * stepHeight;*/;
-            Debug.Log("xnorm" + Mathf.Sin(Mathf.Deg2Rad * deg));
+            //tempNormal.x += Mathf.Sin(Mathf.Deg2Rad * deg)/*Mathf.Sin(lerp * 2 * Mathf.PI) * stepHeight;*/;
+            tempNormal = Quaternion.Euler(0, 0, -Footdir(lerp)) * oldNormal;
             currentNormal = tempNormal;
             lerp += Time.deltaTime * speed;
-            constraint.data.targetPositionWeight = 0;
+            constraint.data.targetPositionWeight = 0f;
+
             //constraint.data.targetPositionWeight += 1f - Mathf.Sin(lerp *  Mathf.PI) * 5f; 
             //changing weight of inverse kinematics for toe so that rotation is function is applied once the foot leaves the ground
         }
         else {
             oldPosition = newPosition;
             oldNormal = newNormal;
-            midPosition = oldPosition;
             constraint.data.targetPositionWeight = 1f;
             toeiktarget.transform.position = oldPosition + toeoffsetfromfoot;
         }
     }
     void RaiseHeel(float magnitude) 
     {
-        float prevpos = currentPosition.y;
+        Debug.Log("raisingheel" + oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f * StepHeight(0f) + currentPosition.y);
+        float prevpos = this.transform.position.y;
         //currentPosition.y = oldPosition.y + (speed / 3f) * (magnitude - stepDistance);
-        /*currentPosition.y = Mathf.MoveTowards(prevpos, (float)((Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f) * 
-                    ( 
-                        -0.0003347*Mathf.Pow(12, 2) 
-                        + 0.0154286*Mathf.Pow(12, 1)  
-                        - 0.00236440
-                    )
-                ) ,(speed / 3f) * (magnitude - stepDistance));
-        */
-        currentPosition.x = midPosition.x = oldPosition.x + (speed / 4f) * (magnitude - stepDistance);
-        currentNormal.x = oldNormal.x + (speed / 4f) * (magnitude - stepDistance);
+        if (currentPosition.y < oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f * StepHeight(0f)) 
+        {
+            currentPosition.y = Mathf.MoveTowards(prevpos, (float)((oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f) * StepHeight(0f)) ,(1.5f* speed * positionManager.stepDistance * Time.deltaTime));
+        }
+        else {
+            Debug.Log("raisingheel broken");
+        }
+        currentPosition.x = midPosition.x = oldPosition.x + (0.4f * speed * (magnitude - stepDistance));
+        currentNormal.x = oldNormal.x + (0.2f * (magnitude - stepDistance));
     }
 
     public bool IsMoving() {
         return lerp < 1;
+    }
+
+    //Parametrized regression models implementaiton
+    float StepHeight(float lerp) 
+    {
+         //parametric according to a normalized version of lerp
+        float posnorm = (float)(lerp * 0.54 + 0.06); //normalizing lerp var for regression model
+        float temposy;
+        if (posnorm < 0.20)
+        {
+            temposy =(float)( 
+                -0.0003347*Mathf.Pow(posnorm*100, 2) 
+                + 0.0154286*Mathf.Pow(posnorm*100, 1)  
+                - 0.00236440
+            );
+            Debug.Log("temposy"+ temposy);
+        }
+        else if (posnorm < 0.40)
+        {
+            temposy =(float)( 
+                0.0002538*Mathf.Pow(posnorm*100, 2)  
+                - 0.0226260*Mathf.Pow(posnorm*100, 1)  
+                + 0.5193032
+            );
+        }
+        else
+        {
+            temposy =(float)( 
+                -0.0004432*Mathf.Pow(posnorm*100, 2) 
+                + 0.0440576*Mathf.Pow(posnorm*100, 1) 
+                - 1.0432218
+            );
+        }
+        return temposy;
+    }
+    float Footdir(float lerp)
+    {
+        float deg;
+        float norm = 60f + lerp * 40f; //normalizing lerp var for regression model
+        //parametric model of ankle angle during step
+        if (norm < 74) {
+            deg =(float)(
+                0.6885119*Mathf.Pow(norm, 1)  
+                - 9.5340476
+            );
+
+        }
+        else if (norm < 88) {
+            deg =(float)(
+                -0.1562798*Mathf.Pow(norm, 2) 
+                + 22.5995833*Mathf.Pow(norm, 1) 
+                - 775.8403571
+
+            );
+
+        }
+        else {
+            deg =(float)(
+                0.2430060*Mathf.Pow(norm, 2) 
+                - 47.2838690*Mathf.Pow(norm, 1) 
+                + 2282.2692857
+            );
+            Debug.Log("reach100");
+        }
+        return deg;
     }
 }

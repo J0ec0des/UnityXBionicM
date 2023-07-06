@@ -445,12 +445,16 @@ MonoBehaviour:
   otherFoot: {fileID: 0}
   stepLength: 3
   stepHeight: 1
-  footOffset: {x: 0.5, y: 0.4, z: 0}
+  footOffset: {x: 0.5, y: 0.42, z: 0}
   constraint: {fileID: 924618942}
   toeik: {fileID: 924618939}
   rightfoot: {fileID: 2631452999402482638}
+  leftfoot: {fileID: 7422788233840966627}
   toeiktarget: {fileID: 1251638222}
-  toeoffsetfromfoot: {x: 1.7, y: -0.44, z: 0}
+  toe: {fileID: 3621134386607141546}
+  toehint: {fileID: 1128062685}
+  _forward: {x: 0, y: 1, z: 0}
+  toeoffsetfromfoot: {x: 1.76, y: -0.42, z: 0}
 --- !u!4 &146127792 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -2655329025797423798, guid: f8a41c6b2496e48109b0175e5e866430, type: 3}
@@ -1941,7 +1945,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 924618939}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0, y: 0, z: 1.208}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1251638223}
@@ -1962,7 +1966,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Weight: 0
   m_Data:
-    m_ConstrainedObject: {fileID: 3621134386607141546}
+    m_ConstrainedObject: {fileID: 7422788233840966627}
     m_SourceObjects:
       m_Length: 1
       m_Item0:
@@ -1992,8 +1996,8 @@ MonoBehaviour:
     m_Offset: {x: 0, y: 0, z: 0}
     m_MinLimit: -180
     m_MaxLimit: 180
-    m_AimAxis: 5
-    m_UpAxis: 2
+    m_AimAxis: 2
+    m_UpAxis: 0
     m_WorldUpType: 0
     m_WorldUpObject: {fileID: 0}
     m_WorldUpAxis: 2
@@ -2023,7 +2027,7 @@ MonoBehaviour:
     m_Tip: {fileID: 5113036025163360863}
     m_Target: {fileID: 1251638223}
     m_Hint: {fileID: 1128062685}
-    m_TargetPositionWeight: 1
+    m_TargetPositionWeight: 0.504
     m_TargetRotationWeight: 1
     m_HintWeight: 1
     m_MaintainTargetPositionOffset: 0
@@ -2172,7 +2176,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1128062684}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.5, z: -1.5}
+  m_LocalPosition: {x: -0, y: 0, z: -1.27}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1251638223}
@@ -2308,8 +2312,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1251638222}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.7, y: 0.12, z: 0.94}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.7, y: 0.12, z: -0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1128062685}

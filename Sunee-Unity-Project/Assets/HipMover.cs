@@ -98,7 +98,6 @@ public class HipMover : MonoBehaviour
                 yield break;
             }
             timeelapsed += Time.deltaTime;
-            float normalizedTime = timeelapsed / moveDuration;
             Vector3 localPos = hipmodel.transform.position;
             Vector3 localtarpos = targetmodel.transform.position;
             /*localPos.y = Mathf.Lerp(
@@ -108,33 +107,15 @@ public class HipMover : MonoBehaviour
             ); */ //quadratic bezier curve made by nested linear interpolation, returns to startpos
             //must alter bezier curve accordingly to gait
 
-            //using mathematical model from regressed values
-            float pos;
-            if (normalizedTime * 0.62 < 0.4)
-            {
-                pos = offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
-                    - 0.0000063*Mathf.Pow((float)(100 * normalizedTime * 0.62), 3) 
-                    + 0.0004173*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
-                    - 0.0059269*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
-                    + 0.4607267 - 0.491
-                ));
-            }
-            else
-            {
-                pos = offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
-                    - 0.0002851*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
-                    + 0.0267342*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
-                    - 0.1322132 - 0.491
-                ));
-            }
+            float normalizedTime = timeelapsed / moveDuration;
 
             Quaternion localRot = Quaternion.Lerp(begRot, endrot, normalizedTime);
             //executing rot interpolation
 
             //version using a sine curve
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
-            localPos.y = pos * positionManager.stepDistance / 3.9f + startpos.y + 0.17f;
-            localtarpos.y = pos * positionManager.stepDistance / 3.9f + targetstartPos.y + 0.17f;
+            localPos.y = Gethipheight(normalizedTime) * positionManager.stepDistance / 3.9f + startpos.y + 0.17f;
+            localtarpos.y = Gethipheight(normalizedTime) * positionManager.stepDistance / 3.9f + targetstartPos.y + 0.17f;
 
             hipmodel.transform.position = localPos;
             hipmodel.transform.rotation = localRot;
@@ -191,5 +172,28 @@ public class HipMover : MonoBehaviour
             yield return null;
         } while (timeelapsed < moveDuration);
         movingpros = false;
+    }
+    float Gethipheight(float normalizedTime)
+    {
+        float pos;
+        //parametric according to a normalized version of lerp it goa attention
+        if (normalizedTime * 0.62 < 0.4)
+        {
+            pos = offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
+                - 0.0000063*Mathf.Pow((float)(100 * normalizedTime * 0.62), 3) 
+                + 0.0004173*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
+                - 0.0059269*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
+                + 0.4607267 - 0.491
+            ));
+        }
+        else
+        {
+            pos = offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
+                - 0.0002851*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
+                + 0.0267342*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
+                - 0.1322132 - 0.491
+            ));
+        }
+        return pos;
     }
 }
