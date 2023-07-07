@@ -69,7 +69,7 @@ public class IKFootSolver : MonoBehaviour
     Quaternion approxLookRotation(Vector3 approximateForward, Vector3 exactUp) {
         //function to make object face a certain approximate direction with an assigned up vector
         Quaternion zToUp = Quaternion.LookRotation(exactUp, -approximateForward);
-        Quaternion yToz = Quaternion.Euler(100, 0, 0);   //adding static offset
+        Quaternion yToz = Quaternion.Euler(90, 0, 0);   //adding static offset
         return zToUp * yToz;
     }
 
@@ -83,7 +83,8 @@ public class IKFootSolver : MonoBehaviour
         stepDistance = (float)(positionManager.stepDistance / 2f);
         //setting transform
         transform.position = currentPosition;
-        transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(105, 0, 0);
+        transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(110, 0, 0);
+        Debug.Log(currentNormal + "normal");
         //setting transform for toe iktarget
         //toeiktarget.transform.position = oldPosition + toeoffsetfromfoot;
         Ray ray = new Ray(body.position + (body.right * footSpacing) + (body.up * stepHeight), Vector3.down);
@@ -91,13 +92,14 @@ public class IKFootSolver : MonoBehaviour
         if (Physics.Raycast(ray, out RaycastHit info, 100, terrainLayer.value)) {
             //conditions for initiating a step
             //change here to add loaded bool for stepping condition, change step length to step distance
-            if (Vector3.Distance(newPosition, info.point) > stepDistance * 1.4f && lerp >= 1 && newPosition.x-info.point.x < 0) {
+            if (Vector3.Distance(newPosition, info.point) > stepDistance * 1.6f && lerp >= 1 && newPosition.x-info.point.x < 0) {
                 if (Vector3.Distance(newPosition, info.point) > stepDistance * 1.8f && HipMover.Moving == false && positionManager.loaded == true && positionManager.footcurrentxpos < 2 && positionManager.footcurrentxpos > -0.5) {
                     //when conditions are met to move abled leg
                     lerp = 0;
                     int direction = body.InverseTransformPoint(info.point).z > body.InverseTransformPoint(newPosition).z ? 1 : -1;
                     newPosition = info.point + (body.forward * stepLength * direction) + footOffset;
                     newNormal = info.normal;
+                    Debug.Log(info.normal + "infonormal");
                 }
                 else {
                     midPosition = oldPosition;
@@ -121,12 +123,18 @@ public class IKFootSolver : MonoBehaviour
             currentPosition = tempPosition;
             Vector3 tempNormal = Vector3.Lerp(oldNormal, newNormal, lerp);
             //tempNormal.x += Mathf.Sin(Mathf.Deg2Rad * deg)/*Mathf.Sin(lerp * 2 * Mathf.PI) * stepHeight;*/;
-            tempNormal = Quaternion.Euler(0, 0, -Footdir(lerp)) * oldNormal;
+            tempNormal.y = Mathf.Cos(Mathf.Deg2Rad * -Footdir(lerp));
+            tempNormal.x = -Mathf.Sin(Mathf.Deg2Rad * -Footdir(lerp));
+            Debug.Log(Footdir(1f) + "normalxy");
             currentNormal = tempNormal;
             lerp += Time.deltaTime * speed;
-            constraint.data.targetPositionWeight = 0f;
+            //constraint.data.targetPositionWeight = 0f;
 
             //constraint.data.targetPositionWeight += 1f - Mathf.Sin(lerp *  Mathf.PI) * 5f; 
+            //constraint.data.targetPositionWeight = -6f * Mathf.Pow(lerp, 2) + 1f;
+            if (lerp > 0.16) {
+                constraint.data.targetPositionWeight = 0;
+            }
             //changing weight of inverse kinematics for toe so that rotation is function is applied once the foot leaves the ground
         }
         else {
@@ -148,7 +156,7 @@ public class IKFootSolver : MonoBehaviour
         else {
             Debug.Log("raisingheel broken");
         }
-        currentPosition.x = midPosition.x = oldPosition.x + (0.4f * speed * (magnitude - stepDistance));
+        currentPosition.x = midPosition.x = oldPosition.x + (0.2f * speed * (magnitude - stepDistance));
         currentNormal.x = oldNormal.x + (0.2f * (magnitude - stepDistance));
     }
 
@@ -160,7 +168,7 @@ public class IKFootSolver : MonoBehaviour
     float StepHeight(float lerp) 
     {
          //parametric according to a normalized version of lerp
-        float posnorm = (float)(lerp * 0.54 + 0.06); //normalizing lerp var for regression model
+        float posnorm = (float)(lerp * 0.55 + 0.05); //normalizing lerp var for regression model
         float temposy;
         if (posnorm < 0.20)
         {
@@ -192,7 +200,7 @@ public class IKFootSolver : MonoBehaviour
     float Footdir(float lerp)
     {
         float deg;
-        float norm = 60f + lerp * 40f; //normalizing lerp var for regression model
+        float norm = 60f + lerp * 46f; //normalizing lerp var for regression model
         //parametric model of ankle angle during step
         if (norm < 74) {
             deg =(float)(

@@ -116,11 +116,13 @@ public class positionManager : MonoBehaviour
             footcurrentxpos = knee_x + ankl_x;
             //Init clock for proper time scale calculation based on how often one as been running.
             float time = 0;
+            Vector3 startposankl = ankl.transform.localPosition;
+            Vector3 startposknee = knee.transform.localPosition;
             while (time < (data.interval * 0.001f))
             {
                 //actions to take during the interval between each data value parsed and applied
-                ankl.transform.localPosition = Vector3.Lerp(ankl.transform.localPosition, ankltarget, time / data.interval);
-                knee.transform.localPosition = Vector3.Lerp(knee.transform.localPosition, kneetarget, time / data.interval);
+                ankl.transform.localPosition = Vector3.Lerp(startposankl, ankltarget, time / (data.interval * 0.001f));
+                knee.transform.localPosition = Vector3.Lerp(startposknee, kneetarget, time / (data.interval * 0.001f));
                 time += Time.deltaTime; //updating time
                 yield return null;
                 Debug.Log("force lerped");
