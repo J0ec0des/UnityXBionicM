@@ -110,7 +110,6 @@ public class IKFootSolver : MonoBehaviour
         else
         {
             //ray debugging
-            Debug.DrawRay(body.position + (body.right * footSpacing), Vector3.down, Color.red);
             Debug.Log("Did not Hit" + body.position + (body.right * footSpacing));
         }
 
@@ -146,12 +145,11 @@ public class IKFootSolver : MonoBehaviour
     }
     void RaiseHeel(float magnitude) 
     {
-        Debug.Log("raisingheel" + oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f * StepHeight(0f) + currentPosition.y);
         float prevpos = this.transform.position.y;
         //currentPosition.y = oldPosition.y + (speed / 3f) * (magnitude - stepDistance);
         if (currentPosition.y < oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f * StepHeight(0f)) 
         {
-            currentPosition.y = Mathf.MoveTowards(prevpos, (float)((oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f) * StepHeight(0f)) ,(1.5f* speed * positionManager.stepDistance * Time.deltaTime));
+            currentPosition.y = Mathf.MoveTowards(prevpos, (float)((oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f) * StepHeight(0f)) ,(1.4f* speed * positionManager.stepDistance * Time.deltaTime));
         }
         else {
             Debug.Log("raisingheel broken");
@@ -177,7 +175,6 @@ public class IKFootSolver : MonoBehaviour
                 + 0.0154286*Mathf.Pow(posnorm*100, 1)  
                 - 0.00236440
             );
-            Debug.Log("temposy"+ temposy);
         }
         else if (posnorm < 0.40)
         {
@@ -224,7 +221,6 @@ public class IKFootSolver : MonoBehaviour
                 - 47.2838690*Mathf.Pow(norm, 1) 
                 + 2282.2692857
             );
-            Debug.Log("reach100");
         }
         return deg;
     }

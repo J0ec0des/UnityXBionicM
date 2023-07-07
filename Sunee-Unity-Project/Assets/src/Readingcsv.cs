@@ -53,10 +53,4 @@ public class Readingcsv : MonoBehaviour
                 position.Add(p);
         }
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

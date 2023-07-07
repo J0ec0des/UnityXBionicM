@@ -61,7 +61,7 @@ public class positionManager : MonoBehaviour
         script = GetComponent<Readingcsv>();
         yield return new WaitForEndOfFrame();
         StartCoroutine(PreDelay());
-        yield return new WaitForSeconds(1.75f);
+        yield return new WaitForSeconds(1.77f);
         foreach (Posdata data in script.position) {
 
             /*

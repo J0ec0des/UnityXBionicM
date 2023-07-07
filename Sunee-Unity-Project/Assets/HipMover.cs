@@ -14,7 +14,8 @@ public class HipMover : MonoBehaviour
     public Transform prostheticFoot;
 
     [SerializeField] float offsetfromgnd = 1f;
-    [SerializeField] float hipdip = 0.85f;
+    //[SerializeField] float hipdip = 0.85f;
+    [SerializeField] float hipfromthigh = 0.15f; 
 
     public static bool Moving = false;
     public bool movingpros = false;
@@ -140,7 +141,7 @@ public class HipMover : MonoBehaviour
         //targetPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
         targetPos.y = ground.position.y - positionManager.ankly + offsetfromgnd;
         targetmodel.transform.position = Vector3.MoveTowards(targetmodel.transform.position, targetPos, 100f); 
-        yield return new WaitForEndOfFrame(); 
+        yield return null; 
     }
     IEnumerator Moveprosrot()
     {
@@ -176,24 +177,26 @@ public class HipMover : MonoBehaviour
     float Gethipheight(float normalizedTime)
     {
         float pos;
+        float Time = normalizedTime * 0.62f;
         //parametric according to a normalized version of lerp it goa attention
         if (normalizedTime * 0.62 < 0.4)
         {
-            pos = offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
-                - 0.0000063*Mathf.Pow((float)(100 * normalizedTime * 0.62), 3) 
-                + 0.0004173*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
-                - 0.0059269*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
+            pos = hipfromthigh + offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
+                - 0.0000063*Mathf.Pow((float)(100 * Time), 3) 
+                + 0.0004173*Mathf.Pow((float)(100 * Time), 2) 
+                - 0.0059269*Mathf.Pow((float)(100 * Time), 1) 
                 + 0.4607267 - 0.491
             ));
         }
         else
         {
-            pos = offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
-                - 0.0002851*Mathf.Pow((float)(100 * normalizedTime * 0.62), 2) 
-                + 0.0267342*Mathf.Pow((float)(100 * normalizedTime * 0.62), 1) 
+            pos = hipfromthigh + offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
+                - 0.0002851*Mathf.Pow((float)(100 * Time), 2) 
+                + 0.0267342*Mathf.Pow((float)(100 * Time), 1) 
                 - 0.1322132 - 0.491
             ));
         }
+        Debug.Log(pos + "pospos" + Time);
         return pos;
     }
 }

@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: 171fb83d2287047d3bdcafef3c90e876, type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -743,7 +743,7 @@ Transform:
   m_Children:
   - {fileID: 1578316498}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &398312514
 GameObject:
@@ -1088,7 +1088,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 7cc4604ef46f74a5fa65012d5b7bad7a, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 7cc4604ef46f74a5fa65012d5b7bad7a, type: 3}
       propertyPath: m_LocalScale.x
@@ -1600,7 +1600,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
 --- !u!1 &727962316
 GameObject:
@@ -2391,7 +2391,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1402535930}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -501, y: -9.16, z: -498.7}
+  m_LocalPosition: {x: -501, y: -9.16, z: -535}
   m_LocalScale: {x: 0, y: 0, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3035,7 +3035,7 @@ MonoBehaviour:
   ground: {fileID: 1402535933}
   prostheticFoot: {fileID: 4079550658908999814}
   offsetfromgnd: 0.55
-  hipdip: 0.8
+  hipfromthigh: 0.13
   movingpros: 0
   startrot: {x: 0, y: 0, z: 0, w: 0}
   magnitude: 0
