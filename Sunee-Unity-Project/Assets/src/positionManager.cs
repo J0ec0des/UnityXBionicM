@@ -125,7 +125,6 @@ public class positionManager : MonoBehaviour
                 knee.transform.localPosition = Vector3.Lerp(startposknee, kneetarget, time / (data.interval * 0.001f));
                 time += Time.deltaTime; //updating time
                 yield return null;
-                Debug.Log("force lerped");
             }
 
             // Check if the position of the target and actual are approximately equal.

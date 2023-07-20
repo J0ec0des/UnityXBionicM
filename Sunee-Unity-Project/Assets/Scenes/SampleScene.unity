@@ -3578,6 +3578,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 658689967392643747}
+  - component: {fileID: 7242993359640254347}
   m_Layer: 0
   m_Name: shin.L
   m_TagString: Untagged
@@ -3585,6 +3586,21 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &7242993359640254347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7242993359640254346}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61bda004d359e407dabfd714a5c0288c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ankle: {fileID: 7422788233840966627}
+  thigh: {fileID: 3646396694471482896}
+  lines: []
 --- !u!4 &7422788233840966627
 Transform:
   m_ObjectHideFlags: 0

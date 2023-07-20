@@ -77,14 +77,12 @@ public class IKFootSolver : MonoBehaviour
     void Update()
     {
         speed = 1.25f * positionManager.cadence / 60f + 0.15f;
-        Debug.Log(positionManager.loaded + "loaded?" + positionManager.stepDistance);
         //updating steplength as value is changed in positionManager script
         stepLength = positionManager.stepDistance * 1.4f;
         stepDistance = (float)(positionManager.stepDistance / 2f);
         //setting transform
         transform.position = currentPosition;
         transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(110, 0, 0);
-        Debug.Log(currentNormal + "normal");
         //setting transform for toe iktarget
         //toeiktarget.transform.position = oldPosition + toeoffsetfromfoot;
         Ray ray = new Ray(body.position + (body.right * footSpacing) + (body.up * stepHeight), Vector3.down);
@@ -124,7 +122,6 @@ public class IKFootSolver : MonoBehaviour
             //tempNormal.x += Mathf.Sin(Mathf.Deg2Rad * deg)/*Mathf.Sin(lerp * 2 * Mathf.PI) * stepHeight;*/;
             tempNormal.y = Mathf.Cos(Mathf.Deg2Rad * -Footdir(lerp));
             tempNormal.x = -Mathf.Sin(Mathf.Deg2Rad * -Footdir(lerp));
-            Debug.Log(Footdir(1f) + "normalxy");
             currentNormal = tempNormal;
             lerp += Time.deltaTime * speed;
             //constraint.data.targetPositionWeight = 0f;
@@ -197,7 +194,7 @@ public class IKFootSolver : MonoBehaviour
     float Footdir(float lerp)
     {
         float deg;
-        float norm = 60f + lerp * 46f; //normalizing lerp var for regression model
+        float norm = 60f + lerp * 40f; //normalizing lerp var for regression model
         //parametric model of ankle angle during step
         if (norm < 74) {
             deg =(float)(
