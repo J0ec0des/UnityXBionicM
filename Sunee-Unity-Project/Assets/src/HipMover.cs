@@ -87,7 +87,7 @@ public class HipMover : MonoBehaviour
         //use stepDistance to find period of sine curve
         Vector3 startpos = hipmodel.transform.position;
         Vector3 targetstartPos = targetmodel.transform.position;
-        Quaternion endrot = startrot * Quaternion.Euler(0, magnitude * -7.8f, 0); //setting the goal of that the rotation of the hip will end up on
+        Quaternion endrot = startrot * Quaternion.Euler(0, magnitude * -7.85f, 0); //setting the goal of that the rotation of the hip will end up on
         Quaternion begRot = hipmodel.transform.rotation; // setting up initial rotaiton of the hip at execution for constant linear interpolation
         do
         {
@@ -115,8 +115,8 @@ public class HipMover : MonoBehaviour
 
             //version using a sine curve
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
-            localPos.y = Gethipheight(normalizedTime) * positionManager.stepDistance / 3.9f + startpos.y + 0.17f;
-            localtarpos.y = Gethipheight(normalizedTime) * positionManager.stepDistance / 3.9f + targetstartPos.y + 0.17f;
+            localPos.y = Gethipheight(normalizedTime) * positionManager.stepDistance / 3.95f + startpos.y + 0.17f;
+            localtarpos.y = Gethipheight(normalizedTime) * positionManager.stepDistance / 3.95f + targetstartPos.y + 0.17f;
 
             hipmodel.transform.position = localPos;
             hipmodel.transform.rotation = localRot;
@@ -153,7 +153,7 @@ public class HipMover : MonoBehaviour
             yield break;
         } 
         float timeelapsed = 0f;
-        Quaternion endrot = startrot * Quaternion.Euler(0, 7.8f, 0); //setting rotation goal as the opposite from the simulated version
+        Quaternion endrot = startrot * Quaternion.Euler(0, 7.85f, 0); //setting rotation goal as the opposite from the simulated version
         Quaternion begRot = hipmodel.transform.rotation;
         do
         {

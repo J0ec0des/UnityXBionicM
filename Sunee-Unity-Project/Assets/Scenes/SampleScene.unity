@@ -3600,6 +3600,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ankle: {fileID: 7422788233840966627}
   thigh: {fileID: 3646396694471482896}
+  hip: {fileID: 5392390209836090217}
   lines: []
 --- !u!4 &7422788233840966627
 Transform:

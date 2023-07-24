@@ -76,9 +76,9 @@ public class IKFootSolver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        speed = 1.25f * positionManager.cadence / 60f + 0.15f;
+        speed = 1.42f * positionManager.cadence / 60f;
         //updating steplength as value is changed in positionManager script
-        stepLength = positionManager.stepDistance * 1.4f;
+        stepLength = positionManager.stepDistance * 1.42f;
         stepDistance = (float)(positionManager.stepDistance / 2f);
         //setting transform
         transform.position = currentPosition;
@@ -116,7 +116,6 @@ public class IKFootSolver : MonoBehaviour
             Vector3 tempPosition = Vector3.Lerp(midPosition, newPosition, lerp);
 
             tempPosition.y += StepHeight(lerp) * Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f;
-            Debug.Log("raisingheel" + tempPosition.y); 
             currentPosition = tempPosition;
             Vector3 tempNormal = Vector3.Lerp(oldNormal, newNormal, lerp);
             //tempNormal.x += Mathf.Sin(Mathf.Deg2Rad * deg)/*Mathf.Sin(lerp * 2 * Mathf.PI) * stepHeight;*/;
