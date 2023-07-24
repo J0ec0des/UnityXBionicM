@@ -13,7 +13,7 @@ public class HipMover : MonoBehaviour
     public Transform ground;
     public Transform prostheticFoot;
 
-    [SerializeField] float offsetfromgnd = 1f;
+    [SerializeField] float offsetfromgnd = 0.26f;
     //[SerializeField] float hipdip = 0.85f;
     [SerializeField] float hipfromthigh = 0.15f; 
 
@@ -115,8 +115,8 @@ public class HipMover : MonoBehaviour
 
             //version using a sine curve
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
-            localPos.y = Gethipheight(normalizedTime) * positionManager.stepDistance / 3.95f + startpos.y + 0.17f;
-            localtarpos.y = Gethipheight(normalizedTime) * positionManager.stepDistance / 3.95f + targetstartPos.y + 0.17f;
+            localPos.y = Gethipheight(normalizedTime) * magnitude * 0.9f + startpos.y + 0.17f;
+            localtarpos.y = Gethipheight(normalizedTime) * magnitude * 0.9f + targetstartPos.y + 0.17f;
 
             hipmodel.transform.position = localPos;
             hipmodel.transform.rotation = localRot;
@@ -153,7 +153,7 @@ public class HipMover : MonoBehaviour
             yield break;
         } 
         float timeelapsed = 0f;
-        Quaternion endrot = startrot * Quaternion.Euler(0, 7.85f, 0); //setting rotation goal as the opposite from the simulated version
+        Quaternion endrot = startrot * Quaternion.Euler(0, magnitude * 7.85f, 0); //setting rotation goal as the opposite from the simulated version
         Quaternion begRot = hipmodel.transform.rotation;
         do
         {
@@ -177,25 +177,26 @@ public class HipMover : MonoBehaviour
     float Gethipheight(float normalizedTime)
     {
         float pos;
-        float Time = normalizedTime * 0.62f;
+        float Time = normalizedTime * 0.4f;
         //parametric according to a normalized version of lerp it goa attention
-        if (normalizedTime * 0.62 < 0.4)
+        if (normalizedTime < 0.12)
         {
-            pos = hipfromthigh + offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
-                - 0.0000063*Mathf.Pow((float)(100 * Time), 3) 
-                + 0.0004173*Mathf.Pow((float)(100 * Time), 2) 
-                - 0.0059269*Mathf.Pow((float)(100 * Time), 1) 
-                + 0.4607267 - 0.491
+            pos = (float)(Scalemanager.height_normalized * 12f * (
+                + 0.0001175*Mathf.Pow((float)(100 * Time), 2) 
+                - 0.0035340*Mathf.Pow((float)(100 * Time), 1) 
+                + 0.4584270 - 0.46
             ));
         }
+
         else
         {
-            pos = hipfromthigh + offsetfromgnd + (float)(Scalemanager.height_normalized * 12f * (
-                - 0.0002851*Mathf.Pow((float)(100 * Time), 2) 
-                + 0.0267342*Mathf.Pow((float)(100 * Time), 1) 
-                - 0.1322132 - 0.491
+            pos = (float)(Scalemanager.height_normalized * 12f * (
+                - 0.0000925*Mathf.Pow((float)(100 * Time), 2) 
+                + 0.0069284*Mathf.Pow((float)(100 * Time), 1) 
+                + 0.3607276 - 0.46
             ));
         }
+        Debug.Log("pospos" + pos);
         return pos;
     }
 }

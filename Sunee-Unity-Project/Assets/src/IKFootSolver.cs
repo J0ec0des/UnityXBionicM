@@ -76,15 +76,14 @@ public class IKFootSolver : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //setting transform
+        transform.position = currentPosition;
+        transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(110, 0, 0);
+        
         speed = 1.42f * positionManager.cadence / 60f;
         //updating steplength as value is changed in positionManager script
         stepLength = positionManager.stepDistance * 1.42f;
         stepDistance = (float)(positionManager.stepDistance / 2f);
-        //setting transform
-        transform.position = currentPosition;
-        transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(110, 0, 0);
-        //setting transform for toe iktarget
-        //toeiktarget.transform.position = oldPosition + toeoffsetfromfoot;
         Ray ray = new Ray(body.position + (body.right * footSpacing) + (body.up * stepHeight), Vector3.down);
         //shooting raycast downward to determine current able leg offset from hip position    
         if (Physics.Raycast(ray, out RaycastHit info, 100, terrainLayer.value)) {

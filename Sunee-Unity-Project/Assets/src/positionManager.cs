@@ -178,8 +178,13 @@ public class positionManager : MonoBehaviour
     void LateUpdate()
     {
         transform.Translate(Vector3.right * (GetBodySpeed() * 1.15f) * Time.deltaTime);
-        //adding speed to character model
-        
+        //adding speed to character model;
+
+        //move object back to world 0 for saving mem *removed due to bug
+        // if (GetBodySpeed() <= 3f && transform.position.x > 50)
+        // {
+        //     transform.position = new Vector3 (0, 0.28f, 0);
+        // }
     }
 
     public float lastpos;
