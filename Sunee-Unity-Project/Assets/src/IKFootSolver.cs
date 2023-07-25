@@ -79,10 +79,10 @@ public class IKFootSolver : MonoBehaviour
         //setting transform
         transform.position = currentPosition;
         transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(110, 0, 0);
-        
-        speed = 1.42f * positionManager.cadence / 60f;
+
+        speed = 1.56f * positionManager.cadence / 60f;
         //updating steplength as value is changed in positionManager script
-        stepLength = positionManager.stepDistance * 1.42f;
+        stepLength = positionManager.stepDistance * 1.56f;
         stepDistance = (float)(positionManager.stepDistance / 2f);
         Ray ray = new Ray(body.position + (body.right * footSpacing) + (body.up * stepHeight), Vector3.down);
         //shooting raycast downward to determine current able leg offset from hip position    
@@ -96,7 +96,6 @@ public class IKFootSolver : MonoBehaviour
                     int direction = body.InverseTransformPoint(info.point).z > body.InverseTransformPoint(newPosition).z ? 1 : -1;
                     newPosition = info.point + (body.forward * stepLength * direction) + footOffset;
                     newNormal = info.normal;
-                    Debug.Log(info.normal + "infonormal");
                 }
                 else {
                     midPosition = oldPosition;
@@ -144,7 +143,7 @@ public class IKFootSolver : MonoBehaviour
         //currentPosition.y = oldPosition.y + (speed / 3f) * (magnitude - stepDistance);
         if (currentPosition.y < oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f * StepHeight(0f)) 
         {
-            currentPosition.y = Mathf.MoveTowards(prevpos, (float)((oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f) * StepHeight(0f)) ,(1.4f* speed * positionManager.stepDistance * Time.deltaTime));
+            currentPosition.y = Mathf.MoveTowards(prevpos, (float)((oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.8f) * StepHeight(0f)) ,(1.4f* speed * positionManager.stepDistance * Time.deltaTime));
         }
         else {
             Debug.Log("raisingheel broken");
@@ -161,30 +160,55 @@ public class IKFootSolver : MonoBehaviour
     float StepHeight(float lerp) 
     {
          //parametric according to a normalized version of lerp
-        float posnorm = (float)(lerp * 0.55 + 0.05); //normalizing lerp var for regression model
+        //float posnorm = (float)(lerp * 0.55 + 0.05); //normalizing lerp var for regression model
         float temposy;
-        if (posnorm < 0.20)
+        // if (posnorm < 0.20)
+        // {
+        //     temposy =(float)( 
+        //         -0.0003347*Mathf.Pow(posnorm*100, 2) 
+        //         + 0.0154286*Mathf.Pow(posnorm*100, 1)  
+        //         - 0.00236440
+        //     );
+        // }
+        // else if (posnorm < 0.40)
+        // {
+        //     temposy =(float)( 
+        //         0.0002538*Mathf.Pow(posnorm*100, 2)  
+        //         - 0.0226260*Mathf.Pow(posnorm*100, 1)  
+        //         + 0.5193032
+        //     );
+        // }
+        // else
+        // {
+        //     temposy =(float)( 
+        //         -0.0004432*Mathf.Pow(posnorm*100, 2) 
+        //         + 0.0440576*Mathf.Pow(posnorm*100, 1) 
+        //         - 1.0432218
+        //     );
+        // }
+        float posnorm = (float)(lerp * 0.44 + 0.16);
+        if (posnorm < 0.36)
         {
             temposy =(float)( 
-                -0.0003347*Mathf.Pow(posnorm*100, 2) 
-                + 0.0154286*Mathf.Pow(posnorm*100, 1)  
-                - 0.00236440
+                -0.0008687*Mathf.Pow(posnorm*100, 2) 
+                + 0.0469357*Mathf.Pow(posnorm*100, 1)  
+                - 0.4427061
             );
         }
-        else if (posnorm < 0.40)
+        else if (posnorm < 0.50)
         {
             temposy =(float)( 
-                0.0002538*Mathf.Pow(posnorm*100, 2)  
-                - 0.0226260*Mathf.Pow(posnorm*100, 1)  
-                + 0.5193032
+                0.0006703*Mathf.Pow(posnorm*100, 2)  
+                - 0.0646528*Mathf.Pow(posnorm*100, 1)  
+                + 1.5823719
             );
         }
         else
         {
             temposy =(float)( 
-                -0.0004432*Mathf.Pow(posnorm*100, 2) 
-                + 0.0440576*Mathf.Pow(posnorm*100, 1) 
-                - 1.0432218
+                -0.0008296*Mathf.Pow(posnorm*100, 2) 
+                + 0.0913990*Mathf.Pow(posnorm*100, 1) 
+                - 2.4840992
             );
         }
         return temposy;
@@ -192,7 +216,7 @@ public class IKFootSolver : MonoBehaviour
     float Footdir(float lerp)
     {
         float deg;
-        float norm = 60f + lerp * 40f; //normalizing lerp var for regression model
+        float norm = 64f + lerp * 36f; //normalizing lerp var for regression model
         //parametric model of ankle angle during step
         if (norm < 74) {
             deg =(float)(

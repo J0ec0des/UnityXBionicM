@@ -23,7 +23,6 @@ public class anglewriter : MonoBehaviour
         yield return new WaitForSeconds(1.77f);
         while (true)
         {
-            Debug.Log("appended");
             float timeelapsed = Time.time;
             float hipangle = Vector3.SignedAngle(new Vector3 (0,-1,0), thigh.transform.up, Vector3.back) * Mathf.Deg2Rad;
             float kneeangle = Vector3.SignedAngle(thigh.transform.up, transform.up, Vector3.back) * Mathf.Deg2Rad; 

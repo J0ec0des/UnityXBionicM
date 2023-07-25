@@ -454,7 +454,7 @@ MonoBehaviour:
   toe: {fileID: 3621134386607141546}
   toehint: {fileID: 1128062685}
   _forward: {x: 0, y: 1, z: 0}
-  toeoffsetfromfoot: {x: 1.72, y: -0.42, z: 0}
+  toeoffsetfromfoot: {x: 1.55, y: -0.42, z: 0}
 --- !u!4 &146127792 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -2655329025797423798, guid: f8a41c6b2496e48109b0175e5e866430, type: 3}
@@ -2175,7 +2175,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1128062684}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: -1.27}
+  m_LocalPosition: {x: 0, y: -0.05, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1251638223}

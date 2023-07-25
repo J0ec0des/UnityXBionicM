@@ -36,7 +36,7 @@ public class HipMover : MonoBehaviour
 			time -= Time.deltaTime;
 		}else{
 		    TryHipSim();
-            magnitude = (float)(positionManager.stepDistance / 2.855);
+            magnitude = (float)(positionManager.stepDistance / 3.8);
 		}
     }
     public void TryHipSim() 
@@ -115,8 +115,8 @@ public class HipMover : MonoBehaviour
 
             //version using a sine curve
             //localPos.y += hipdip * Mathf.Sin(normalizedTime * 2 * Mathf.PI);
-            localPos.y = Gethipheight(normalizedTime) * magnitude * 0.9f + startpos.y + 0.17f;
-            localtarpos.y = Gethipheight(normalizedTime) * magnitude * 0.9f + targetstartPos.y + 0.17f;
+            localPos.y = Gethipheight(normalizedTime) * magnitude + startpos.y;
+            localtarpos.y = Gethipheight(normalizedTime) * magnitude + targetstartPos.y;
 
             hipmodel.transform.position = localPos;
             hipmodel.transform.rotation = localRot;
@@ -177,24 +177,24 @@ public class HipMover : MonoBehaviour
     float Gethipheight(float normalizedTime)
     {
         float pos;
-        float Time = normalizedTime * 0.4f;
+        float Time = normalizedTime * 0.5f + 0.10f;
         //parametric according to a normalized version of lerp it goa attention
-        if (normalizedTime < 0.12)
+        if (Time < 0.52)
         {
             pos = (float)(Scalemanager.height_normalized * 12f * (
-                + 0.0001175*Mathf.Pow((float)(100 * Time), 2) 
-                - 0.0035340*Mathf.Pow((float)(100 * Time), 1) 
-                + 0.4584270 - 0.46
+                -0.0000686*Mathf.Pow((float)(100 * Time), 2) 
+                +0.0055695*Mathf.Pow((float)(100 * Time), 1) 
+                +0.3782964 - 0.43
             ));
         }
 
         else
         {
             pos = (float)(Scalemanager.height_normalized * 12f * (
-                - 0.0000925*Mathf.Pow((float)(100 * Time), 2) 
-                + 0.0069284*Mathf.Pow((float)(100 * Time), 1) 
-                + 0.3607276 - 0.46
-            ));
+                -0.0007889*Mathf.Pow((float)(100 * Time), 2) 
+                + 0.0848402*Mathf.Pow((float)(100 * Time), 1) 
+                - 1.7983717 - 0.43
+                ));
         }
         Debug.Log("pospos" + pos);
         return pos;

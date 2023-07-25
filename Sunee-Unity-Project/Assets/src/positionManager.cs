@@ -177,7 +177,7 @@ public class positionManager : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        transform.Translate(Vector3.right * (GetBodySpeed() * 1.15f) * Time.deltaTime);
+        transform.Translate(Vector3.right * (GetBodySpeed() * 1.17f) * Time.deltaTime);
         //adding speed to character model;
 
         //move object back to world 0 for saving mem *removed due to bug
