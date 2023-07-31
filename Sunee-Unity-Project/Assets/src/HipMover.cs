@@ -36,7 +36,7 @@ public class HipMover : MonoBehaviour
 			time -= Time.deltaTime;
 		}else{
 		    TryHipSim();
-            magnitude = (float)(positionManager.stepDistance / 3.8);
+            magnitude = (float)(positionManager.stepDistance / 3.85);
 		}
     }
     public void TryHipSim() 
@@ -49,7 +49,7 @@ public class HipMover : MonoBehaviour
             StartCoroutine(MoveHipsim());
             
         }
-        if (positionManager.loaded == true) 
+        if (positionManager.loaded == true && positionManager.ankly < -7.5f) 
         {
             //Start moving hip(prosthetic is loaded)
             StartCoroutine(MoveHippros());
@@ -93,7 +93,6 @@ public class HipMover : MonoBehaviour
         {
             if (positionManager.loaded == true) 
             {
-                StartCoroutine(MoveHippros());
                 Moving = false;
                 Debug.Log("broken");
                 yield break;
@@ -176,26 +175,27 @@ public class HipMover : MonoBehaviour
     }
     float Gethipheight(float normalizedTime)
     {
-        float pos;
-        float Time = normalizedTime * 0.5f + 0.10f;
+        float pos = 0;
+        float Time = normalizedTime * 0.5f + 0.14f;
         //parametric according to a normalized version of lerp it goa attention
         if (Time < 0.52)
         {
             pos = (float)(Scalemanager.height_normalized * 12f * (
                 -0.0000686*Mathf.Pow((float)(100 * Time), 2) 
                 +0.0055695*Mathf.Pow((float)(100 * Time), 1) 
-                +0.3782964 - 0.43
+                +0.3782964 - 0.445
             ));
         }
 
-        else
+        else if (Time < 0.63)
         {
             pos = (float)(Scalemanager.height_normalized * 12f * (
                 -0.0007889*Mathf.Pow((float)(100 * Time), 2) 
                 + 0.0848402*Mathf.Pow((float)(100 * Time), 1) 
-                - 1.7983717 - 0.43
+                - 1.7983717 - 0.445
                 ));
         }
+
         Debug.Log("pospos" + pos);
         return pos;
     }
