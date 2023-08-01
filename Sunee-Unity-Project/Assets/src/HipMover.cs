@@ -81,7 +81,6 @@ public class HipMover : MonoBehaviour
             Debug.Log("break was called");
             yield break;
         } 
-        Debug.Log(moveDuration + "dura" + positionManager.cadence + "cad");
         float timeelapsed = 0f;
         //Move hip function when the able leg is on the ground
         //use stepDistance to find period of sine curve
@@ -123,7 +122,16 @@ public class HipMover : MonoBehaviour
             Debug.Log("movinghipsim");
             yield return null;
         } while (timeelapsed < moveDuration);
-        Moving = false;
+            Moving = false;
+            //move hip fuction when the prosthetic is on the ground.
+            Vector3 llPos = hipmodel.transform.position;
+            llPos.y = ground.position.y - positionManager.ankly + offsetfromgnd;
+            hipmodel.transform.position = Vector3.MoveTowards(hipmodel.transform.position, llPos, 0.1f * Time.deltaTime);    
+
+            //move target body as well according to hip
+            Vector3 ttPos = targetmodel.transform.position;
+            ttPos.y = ground.position.y - positionManager.ankly + offsetfromgnd;
+            targetmodel.transform.position = Vector3.MoveTowards(targetmodel.transform.position, ttPos, 0.1f * Time.deltaTime); 
     }
 
     IEnumerator MoveHippros() 
@@ -132,14 +140,13 @@ public class HipMover : MonoBehaviour
         Vector3 localPos = hipmodel.transform.position;
         //localPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
         localPos.y = ground.position.y - positionManager.ankly + offsetfromgnd;
-        hipmodel.transform.position = Vector3.MoveTowards(hipmodel.transform.position, localPos, 100f);    
-        Debug.Log(localPos.y + "cadposy");
+        hipmodel.transform.position = Vector3.MoveTowards(hipmodel.transform.position, localPos, 5f * Time.deltaTime);    
 
         //move target body as well according to hip
         Vector3 targetPos = targetmodel.transform.position;
         //targetPos.y = FindHipY(ground, prostheticFoot) + offsetfromgnd;
         targetPos.y = ground.position.y - positionManager.ankly + offsetfromgnd;
-        targetmodel.transform.position = Vector3.MoveTowards(targetmodel.transform.position, targetPos, 100f); 
+        targetmodel.transform.position = Vector3.MoveTowards(targetmodel.transform.position, targetPos, 5f * Time.deltaTime); 
         yield return null; 
     }
     IEnumerator Moveprosrot()
@@ -195,8 +202,6 @@ public class HipMover : MonoBehaviour
                 - 1.7983717 - 0.445
                 ));
         }
-
-        Debug.Log("pospos" + pos);
         return pos;
     }
 }

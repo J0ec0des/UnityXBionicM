@@ -448,6 +448,7 @@ MonoBehaviour:
   footOffset: {x: 0.5, y: 0.42, z: 0}
   constraint: {fileID: 924618942}
   toeik: {fileID: 924618939}
+  shin: {fileID: 658689967392643747}
   rightfoot: {fileID: 2631452999402482638}
   leftfoot: {fileID: 7422788233840966627}
   toeiktarget: {fileID: 1251638222}

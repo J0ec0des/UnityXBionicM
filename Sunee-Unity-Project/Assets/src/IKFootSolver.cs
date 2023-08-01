@@ -41,7 +41,7 @@ public class IKFootSolver : MonoBehaviour
     //init ik constraint as a gameobject
     //can be deleted/made small?
 
-
+    public Transform shin;
 
     public GameObject rightfoot;
     public Transform leftfoot;
@@ -78,7 +78,8 @@ public class IKFootSolver : MonoBehaviour
     {
         //setting transform
         transform.position = currentPosition;
-        transform.rotation = approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(110, 0, 0);
+        Quaternion shinrot = shin.transform.rotation * Quaternion.Euler(0, -90, 180);
+        transform.rotation = shinrot * approxLookRotation(body.forward, currentNormal) * Quaternion.Euler(110, 0, 0);
 
         speed = 1.56f * positionManager.cadence / 60f;
         //updating steplength as value is changed in positionManager script
@@ -87,10 +88,9 @@ public class IKFootSolver : MonoBehaviour
         Ray ray = new Ray(body.position + (body.right * footSpacing) + (body.up * stepHeight), Vector3.down);
         //shooting raycast downward to determine current able leg offset from hip position    
         if (Physics.Raycast(ray, out RaycastHit info, 100, terrainLayer.value)) {
-            Debug.Log(newPosition.x-info.point.x+"difference");
             //conditions for initiating a step
             //change here to add loaded bool for stepping condition, change step length to step distance
-            if (Vector3.Distance(newPosition, info.point) > stepDistance * 1.5f && lerp >= 1 && newPosition.x-info.point.x < 0) {
+            if (Vector3.Distance(newPosition, info.point) > stepDistance * 1.4f && lerp >= 1 && newPosition.x-info.point.x < 0) {
                 if (Vector3.Distance(newPosition, info.point) > stepDistance * 1.7f && HipMover.Moving == false && positionManager.loaded == true && positionManager.footcurrentxpos < 2.5 && positionManager.footcurrentxpos > -1) {
                     //when conditions are met to move abled leg
                     lerp = 0;
@@ -144,13 +144,13 @@ public class IKFootSolver : MonoBehaviour
         //currentPosition.y = oldPosition.y + (speed / 3f) * (magnitude - stepDistance);
         if (currentPosition.y < oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f * StepHeight(0f)) 
         {
-            currentPosition.y = Mathf.MoveTowards(prevpos, (float)((oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.8f) * StepHeight(0f)) ,(1.4f* speed * positionManager.stepDistance * Time.deltaTime));
+            currentPosition.y = Mathf.MoveTowards(prevpos, (float)((oldPosition.y + Scalemanager.height_normalized * 12f * positionManager.stepDistance / 3.9f) * StepHeight(0f)) ,(speed * positionManager.stepDistance * Time.deltaTime));
         }
         else {
             Debug.Log("raisingheel broken");
         }
-        currentPosition.x = midPosition.x = oldPosition.x + (0.2f * speed * (magnitude - stepDistance));
-        currentNormal.x = oldNormal.x + (0.2f * (magnitude - stepDistance));
+        currentPosition.x = midPosition.x = oldPosition.x + (0.08f * speed * (magnitude - stepDistance));
+        currentNormal.x = oldNormal.x + (0.08f * (magnitude - stepDistance));
     }
 
     public bool IsMoving() {
@@ -187,7 +187,7 @@ public class IKFootSolver : MonoBehaviour
         //         - 1.0432218
         //     );
         // }
-        float posnorm = (float)(lerp * 0.44 + 0.16);
+        float posnorm = (float)(lerp * 0.48 + 0.12);
         if (posnorm < 0.36)
         {
             temposy =(float)( 
